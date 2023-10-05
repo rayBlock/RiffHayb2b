@@ -16,15 +16,24 @@
     "fix": "yarn lint:fix; yarn fmt",
     "lint:fix": "yarn lint --fix",
     "migrate": "tsx src/db/scripts/migrate",
-    "astro": "astro"
+    "astro": "astro",
+    "up": "doppler run yarn dev",
+    "riff": "BROWSER=0 remotion preview src/remotion/index.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.2.0",
     "@astrojs/react": "^3.0.0",
     "@astrojs/vercel": "^4.0.2",
+    "@aws-sdk/client-s3": "^3.423.0",
+    "@aws-sdk/s3-request-presigner": "^3.423.0",
     "@propelauth/base-elements": "^0.0.16",
     "@propelauth/node": "^2.1.0",
     "@propelauth/react": "2.1.0-beta.4",
+    "@remotion/bundler": "^4.0.41",
+    "@remotion/cli": "^4.0.41",
+    "@remotion/paths": "^4.0.41",
+    "@remotion/player": "^4.0.41",
+    "@remotion/tailwind": "^4.0.41",
     "@resvg/resvg-js": "^2.4.1",
     "@t3-oss/env-core": "^0.6.0",
     "@tanstack/eslint-plugin-query": "^4.29.4",
@@ -57,6 +66,7 @@
     "jotai": "^2.2.2",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.1",
+    "langchain": "^0.0.156",
     "postgres": "^3.3.4",
     "posthog-js": "^1.69.0",
     "posthog-node": "^3.1.1",
@@ -66,17 +76,23 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.14.1",
+    "remotion": "^4.0.41",
     "satori": "^0.10.1",
     "solid-js": "^1.7.6",
     "stripe": "^12.12.0",
+    "tailwind-merge": "^1.14.0",
     "tsx": "^3.12.7",
     "typescript": "^5.2.2",
     "unthunk": "^0.0.1",
+    "uuid": "^9.0.1",
     "vite-plugin-checker": "^0.6.2",
-    "wretch": "^2.5.2"
+    "wretch": "^2.5.2",
+    "zod": "^3.22.2",
+    "zod-to-json-schema": "^3.21.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
+    "@types/uuid": "^9.0.4",
     "tailwindcss": "^3.3.3"
   }
 }

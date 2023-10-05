@@ -7,18 +7,18 @@ export type Props = SeoProps;
 ---
 
 <Layout {...Astro.props}>
-	<div class="relative flex min-h-screen flex-col justify-between gap-4">
+	<div class="relative flex min-h-screen flex-col bg-[#111f2b] justify-between gap-4">
 		<main class="relative grow">
 			<slot />
 		</main>
-		<footer class="w-full border-t border-gray-200 bg-white px-10 py-4">
+		<footer class="w-full border-t border-gray-200 bg-[#18122a] px-10 py-4">
 			<div class="container mx-auto px-4 sm:px-20">
-				<div class="flex items-center justify-between">
+				<div class="flex w-full items-center justify-center">
 					<div class="text-sm text-gray-600">
-						&copy; {new Date().getFullYear()}
+						&copy; {new Date().getFullYear()} {" "}
 						{websiteTitle}
 					</div>
-					<div class="text-sm text-gray-600">
+					<!-- <div class="text-sm text-gray-600">
 						This app is open-source!{' '}
 						<a
 							class="text-blue-700 hover:text-rose-600"
@@ -48,7 +48,7 @@ export type Props = SeoProps;
 									clip-rule="evenodd"></path>
 							</svg>
 						</a>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</footer>

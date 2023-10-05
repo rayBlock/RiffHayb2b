@@ -5,6 +5,7 @@ import { helloRouter } from './routers/hello';
 import { promptsRouter } from './routers/prompts';
 import { settingsRouter } from './routers/settings';
 import { surveysRouter } from './routers/surveys';
+import { remotionRouter } from './routers/remotion';
 import { createTRPCRouter, createTRPCServerSideHelpers } from './trpc';
 
 /**
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
 	prompts: promptsRouter,
 	settings: settingsRouter,
 	surveys: surveysRouter,
+	render: remotionRouter,
 });
 
 // export type definition of API

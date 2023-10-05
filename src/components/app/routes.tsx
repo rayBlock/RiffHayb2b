@@ -16,6 +16,7 @@ import { Prompt } from './Prompt';
 import { Prompts } from './Prompts';
 import { Settings } from './Settings';
 import { propelAuthAtom } from './store';
+import { Remotion } from './Remotion';
 
 export const routes: RemixBrowserContext & RouteObject[] = [
 	{
@@ -80,6 +81,12 @@ export const routes: RemixBrowserContext & RouteObject[] = [
 				},
 				Component() {
 					return <Prompt />;
+				},
+			},
+			{
+				path: '/app/remotion',
+				Component() {
+					return <Remotion />;
 				},
 			},
 			{
