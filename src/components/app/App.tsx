@@ -164,7 +164,7 @@ const AppWithOrg = () => {
 					<NavLink
 						to="/app/prompts"
 						className={({ isPending }) =>
-							clsx('rounded  px-4 py-2 text-white', isPending ? 'bg-indigo-600' : 'bg-indigo-500')
+							clsx('rounded-xl border border-black  px-4 py-2 text-white', isPending ? 'bg-indigo-600' : 'bg-indigo-500')
 						}
 					>
 						View prompts

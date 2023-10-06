@@ -1,183 +1,171 @@
-import React, {type PropsWithChildren, useMemo } from 'react';
+import React, { type PropsWithChildren, useMemo } from 'react';
 import { useCurrentFrame } from 'remotion';
+
 import Sequence from './components/Sequence';
 import Transition from './components/Transition';
 
 type TransitionSeriesComponents = {
-  Sequence: typeof Sequence;
-  Transition: typeof Transition;
+	Sequence: typeof Sequence;
+	Transition: typeof Transition;
 };
 
-type TransitionSeriesChildTypes = 
-  | React.ReactElement<typeof Sequence>
-  | React.ReactElement<typeof Transition>;
+type TransitionSeriesChildTypes =
+	| React.ReactElement<typeof Sequence>
+	| React.ReactElement<typeof Transition>;
 
 type TransitionSeriesComponentType = ((props: {
-  children: React.ReactNode | React.ReactNode[];
+	children: React.ReactNode | React.ReactNode[];
 }) => React.ReactElement | null) &
-  TransitionSeriesComponents;
+	TransitionSeriesComponents;
 
 function isInside(start: number, end: number, value: number) {
-  return value < end && value >= start;
+	return value < end && value >= start;
 }
 
 type ReactChildArray = ReturnType<typeof React.Children.toArray>;
 
-const flattenFirstLevelFragments = (
-  children: React.ReactNode
-): ReactChildArray => {
-  const childrenArray = React.Children.toArray(children);
-  return childrenArray.reduce((flatChildren: ReactChildArray, child) => {
-    if ((child as React.ReactElement<unknown>).type === React.Fragment) {
-      return flatChildren.concat(
-        React.Children.toArray(
-          (child as React.ReactElement<PropsWithChildren<unknown>>).props
-            .children
-        )
-      );
-    }
+const flattenFirstLevelFragments = (children: React.ReactNode): ReactChildArray => {
+	const childrenArray = React.Children.toArray(children);
+	return childrenArray.reduce((flatChildren: ReactChildArray, child) => {
+		if ((child as React.ReactElement<unknown>).type === React.Fragment) {
+			return flatChildren.concat(
+				React.Children.toArray(
+					(child as React.ReactElement<PropsWithChildren<unknown>>).props.children
+				)
+			);
+		}
 
-    flatChildren.push(child);
-    return flatChildren;
-  }, []);
+		flatChildren.push(child);
+		return flatChildren;
+	}, []);
 };
 
 const DEBUG = false;
 
 const TransitionSeries: TransitionSeriesComponentType = ({ children }) => {
-  const currentFrame = useCurrentFrame();
+	const currentFrame = useCurrentFrame();
 
-  const visibleChildren = useMemo(() => {
-    // Flatten the first level of React fragments
-    const childArray = flattenFirstLevelFragments(children);
+	const visibleChildren = useMemo(() => {
+		// Flatten the first level of React fragments
+		const childArray = flattenFirstLevelFragments(children);
 
-    let accumulatedDuration = 0;
+		let accumulatedDuration = 0;
 
-    const activeChildren = React.Children.map(childArray, (child:any, i) => {
-      if (
-        // !React.isValidElement(child) ||
-        !(child.type === Transition || child.type === Sequence)
-      ) {
-        throw new Error(
-          '<TransitionSeries/> can only have children of type: ReactFragment, TransitionSeries.Sequence, TransitionSeries.Transition'
-        );
-      }
+		const activeChildren = React.Children.map(childArray, (child: any, i) => {
+			if (
+				// !React.isValidElement(child) ||
+				!(child.type === Transition || child.type === Sequence)
+			) {
+				throw new Error(
+					'<TransitionSeries/> can only have children of type: ReactFragment, TransitionSeries.Sequence, TransitionSeries.Transition'
+				);
+			}
 
+			const offset = child.props.offset ?? 0;
 
-      const offset = child.props.offset ?? 0;
+			const duration = child.props.durationInFrames;
 
-      const duration = child.props.durationInFrames;
+			if (child.type === Transition) {
+				let transitionStartFrame = accumulatedDuration + offset - duration;
 
-      if (child.type === Transition) {
-        let transitionStartFrame = accumulatedDuration + offset - duration;
+				if (transitionStartFrame < 0) {
+					transitionStartFrame = 0;
+					accumulatedDuration += duration;
+				}
 
-        if (transitionStartFrame < 0) {
-          transitionStartFrame = 0;
-          accumulatedDuration += duration;
-        }
+				if (!isInside(transitionStartFrame, transitionStartFrame + duration, currentFrame)) {
+					// we're not currently in this transition, so skip it
+					return null;
+				}
 
-        if (
-          !isInside(
-            transitionStartFrame,
-            transitionStartFrame + duration,
-            currentFrame
-          )
-        ) {
-          // we're not currently in this transition, so skip it
-          return null;
-        }
+				return React.cloneElement(child, {
+					...child.props,
 
-        return React.cloneElement(child, {
-          ...child.props,
+					from: transitionStartFrame,
+					exitingElement: childArray[i - 1],
+					enteringElement: childArray[i + 1],
+				});
+			}
 
-          from: transitionStartFrame,
-          exitingElement: childArray[i - 1],
-          enteringElement: childArray[i + 1],
-        });
-      }
+			const nextChild: any = childArray[i + 1] as TransitionSeriesChildTypes;
+			const prevChild: any = childArray[i - 1] as TransitionSeriesChildTypes;
 
-      const nextChild:any = childArray[i + 1] as TransitionSeriesChildTypes;
-      const prevChild:any = childArray[i - 1] as TransitionSeriesChildTypes;
+			if (prevChild && prevChild.type === Transition) {
+				accumulatedDuration -= prevChild.props.durationInFrames;
+			}
 
-      if (prevChild && prevChild.type === Transition) {
+			const startFrame = accumulatedDuration + offset;
 
-        accumulatedDuration -= prevChild.props.durationInFrames;
-      }
+			const isTransitioning = (() => {
+				let start = 0;
+				let end = 0;
+				let isInsidePrevTransition = false;
+				let isInsideNextTransition = false;
 
-      const startFrame = accumulatedDuration + offset;
+				if (prevChild && prevChild.type === Transition) {
+					start = accumulatedDuration;
 
-      const isTransitioning = (() => {
-        let start = 0;
-        let end = 0;
-        let isInsidePrevTransition = false;
-        let isInsideNextTransition = false;
+					end = start + prevChild.props.durationInFrames;
 
-        if (prevChild && prevChild.type === Transition) {
-          start = accumulatedDuration;
+					isInsidePrevTransition = isInside(start, end, currentFrame);
 
-          end = start + prevChild.props.durationInFrames;
+					if (DEBUG) {
+						console.log(`${i}:prev (${currentFrame})`, {
+							start,
+							end,
+							d_t: prevChild.props.durationInFrames,
+							duration,
+							isInsidePrevTransition,
+							accumulatedDuration,
+						});
+					}
+				}
 
-          isInsidePrevTransition = isInside(start, end, currentFrame);
+				if (nextChild && nextChild.type === Transition) {
+					start = accumulatedDuration + duration - nextChild.props.durationInFrames;
 
-          if (DEBUG) {
-            console.log(`${i}:prev (${currentFrame})`, {
-              start,
-              end,
-              d_t: prevChild.props.durationInFrames,
-              duration,
-              isInsidePrevTransition,
-              accumulatedDuration,
-            });
-          }
-        }
+					end = start + nextChild.props.durationInFrames;
 
-        if (nextChild && nextChild.type === Transition) {
-          start =
+					isInsideNextTransition = isInside(start, end, currentFrame);
 
-            accumulatedDuration + duration - nextChild.props.durationInFrames;
+					if (DEBUG) {
+						console.log(`${i}:next (${currentFrame})`, {
+							start,
+							end,
 
-          end = start + nextChild.props.durationInFrames;
+							d_t: nextChild.props.durationInFrames,
+							duration,
+							isInsideNextTransition,
+							accumulatedDuration,
+						});
+					}
+				}
 
-          isInsideNextTransition = isInside(start, end, currentFrame);
+				if (isInsideNextTransition || isInsidePrevTransition) return true;
 
-          if (DEBUG) {
-            console.log(`${i}:next (${currentFrame})`, {
-              start,
-              end,
+				return false;
+			})();
 
-              d_t: nextChild.props.durationInFrames,
-              duration,
-              isInsideNextTransition,
-              accumulatedDuration,
-            });
-          }
-        }
+			accumulatedDuration += duration;
 
-        if (isInsideNextTransition || isInsidePrevTransition) return true;
+			if (isTransitioning) {
+				// if we're in a transition it's the transition component's
+				// responsibility to render the item
+				return null;
+			}
 
-        return false;
-      })();
+			return React.cloneElement(child, {
+				...child.props,
+				key: `${i}-${child.key}`,
 
-      accumulatedDuration += duration;
+				from: startFrame,
+			});
+		});
 
-      if (isTransitioning) {
-        // if we're in a transition it's the transition component's
-        // responsibility to render the item
-        return null;
-      }
+		return activeChildren;
+	}, [children, currentFrame]);
 
-      return React.cloneElement(child, {
-        ...child.props,
-        key: `${i}-${child.key}`,
-
-        from: startFrame,
-      });
-    });
-
-    return activeChildren;
-  }, [children, currentFrame]);
-
-  return <>{visibleChildren}</>;
+	return <>{visibleChildren}</>;
 };
 
 TransitionSeries.Sequence = Sequence;

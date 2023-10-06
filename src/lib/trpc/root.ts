@@ -3,9 +3,9 @@ import type { AstroGlobal } from 'astro';
 import { authRouter } from './routers/auth';
 import { helloRouter } from './routers/hello';
 import { promptsRouter } from './routers/prompts';
+import { remotionRouter } from './routers/remotion';
 import { settingsRouter } from './routers/settings';
 import { surveysRouter } from './routers/surveys';
-import { remotionRouter } from './routers/remotion';
 import { createTRPCRouter, createTRPCServerSideHelpers } from './trpc';
 
 /**

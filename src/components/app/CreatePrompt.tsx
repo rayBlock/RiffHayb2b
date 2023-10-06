@@ -72,7 +72,7 @@ const defaultPrompts = {
 
 export function CreatePrompt() {
 	const state = useLocation().state as PromptState;
-		console.log(state, "state...")
+	console.log(state, 'state...');
 	const [title, setTitle] = useState('Create a prompt');
 	const [defaultTemplate, setDefaultTemplate] = useState(
 		state?.prompt?.template || defaultPrompts.empty

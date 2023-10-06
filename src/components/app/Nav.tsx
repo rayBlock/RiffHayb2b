@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { env } from '../../config';
-import { SupportWidget } from '../fogbender/Support';
+// import { SupportWidget } from '../fogbender/Support';
 import {
 	saveOrgSelectionToLocalStorage,
 	useLogoutFunction,
@@ -22,7 +22,7 @@ export function AppNav() {
 	const logout = useLogoutFunction();
 
 	const [path, setPath] = useState(undefined as undefined | string);
-
+	console.log(path, "pathius centradon")
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
 			setPath(window.location.pathname);
@@ -58,7 +58,7 @@ export function AppNav() {
 			<div className="container mx-auto flex items-center justify-between text-xs sm:text-sm">
 				<nav className="flex flex-wrap space-x-2 sm:space-x-4">
 					<NavLink to="/app" end className={navLinkClass}>
-						Overview
+						Home
 					</NavLink>
 					<NavLink to="/app/prompts" className={navLinkClass}>
 						Prompts
@@ -66,10 +66,10 @@ export function AppNav() {
 					<NavLink to="/app/settings" className={navLinkClass}>
 						Settings
 					</NavLink>
-					<NavLink to="/app/support" className={navLinkClassSupport}>
+					{/* <NavLink to="/app/support" className={navLinkClassSupport}>
 						Support
 						{path !== '/app/support' && <SupportWidget kind="badge" />}
-					</NavLink>
+					</NavLink> */}
 				</nav>
 				<div className="relative inline-block text-left" ref={menuRef}>
 					<button
@@ -158,4 +158,4 @@ const getNavLinkClass =
 		);
 
 const navLinkClass = getNavLinkClass();
-const navLinkClassSupport = getNavLinkClass('flex gap-px');
+// const navLinkClassSupport = getNavLinkClass('flex gap-px');

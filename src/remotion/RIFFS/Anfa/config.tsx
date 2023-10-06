@@ -1,31 +1,39 @@
-import type { CompConfig } from '../../../types/remotion'
-import { Text } from '../../utils/schemas/text-schema'
-import { Image, im } from '../../utils/schemas/image-schema'
-import { AnfaMotion, type AnfaProps } from './Anfa';
 import { z } from 'zod';
 
+import type { CompConfig } from '../../../types/remotion';
+import { Text } from '../../utils/schemas/text-schema';
+import { Color } from '../../utils/schemas/color-schema'
+import { Video } from '../../utils/schemas/video-schema'
+import { AnfaMotion, type AnfaProps } from './Anfa';
+import { img } from '../../utils/schemas/image-schema';
 
 const id = 'Anfa';
-const durationInFrames = 90;
-const minDurationFrames = durationInFrames - 20
-const maxDurationFrames = durationInFrames + 20
+const durationInFrames = 93;
+const minDurationFrames = durationInFrames - 20;
+const maxDurationFrames = durationInFrames + 100;
 
-export const inputPropsSchema = z.object({
-name: z.string().default('Anfa'),
-sText: Text.extend({fs: z.number().default(44)
-}).describe('short'),
-image1: im,
+export const inputPropsSchema = z
+	.object({
+		name: z.string().default('Anfa'),
+		sText: Text.extend({ fs: z.number().default(44) }).describe('short'),
+		mText: Text.extend({ fs: z.number().default(44) }).describe('mid'),
+		longText: Text.extend({ fs: z.number().default(44) }).describe('long'),
+		color1: Color.default("red"),
+		// color2: Color.default('red'),
+		color3: Color.default('lime'),
 
 
-})
-.deepPartial();
+		img: img,
+		vide: Video
 
+	})
+	.deepPartial();
 
 export const AnfaRiff = {
-id,
-durationInFrames,
-minDurationFrames,
-maxDurationFrames,
-inputPropsSchema,
-component: AnfaMotion,
+	id,
+	durationInFrames,
+	minDurationFrames,
+	maxDurationFrames,
+	inputPropsSchema,
+	component: AnfaMotion,
 } satisfies CompConfig<AnfaProps>;

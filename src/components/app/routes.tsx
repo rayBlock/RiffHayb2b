@@ -14,9 +14,9 @@ import { EditPrompt } from './EditPrompt';
 import { AppNav } from './Nav';
 import { Prompt } from './Prompt';
 import { Prompts } from './Prompts';
+import { Remotion } from './Remotion';
 import { Settings } from './Settings';
 import { propelAuthAtom } from './store';
-import { Remotion } from './Remotion';
 
 export const routes: RemixBrowserContext & RouteObject[] = [
 	{

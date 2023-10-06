@@ -1,20 +1,24 @@
-import type { CompConfig } from "../types/remotion";
-import { JinjasRiff } from "./RIFFS/Jinjas/config";
-import { LilyRiff } from "./RIFFS/Lily/config";
-// import { PikarRiff } from "./RIFFS/Pikar/config";
-import { SempaRiff } from "./RIFFS/Sempa/config";
+import type { CompConfig } from '../types/remotion';
+import { AnfaRiff } from './RIFFS/Anfa/config';
+// import { JinjasRiff } from './RIFFS/Jinjas/config';
+// import { LilyRiff } from './RIFFS/Lily/config';
+
+export const riffsArray: CompConfig<any>[] = [
+	AnfaRiff,
+	AnfaRiff,
+	AnfaRiff,
+
+	AnfaRiff,
 
 
+	AnfaRiff,
 
+	AnfaRiff,
 
-export const riffsArray:CompConfig<any>[] = [
+	AnfaRiff,
 
-    JinjasRiff,
-    LilyRiff,
-    JinjasRiff,
-    JinjasRiff,
-    JinjasRiff,
-    SempaRiff,
-]
+];
 
-export const comps:Map<string,any> = new Map<string, CompConfig<any>>(riffsArray.map((riff) => [riff.id, riff]));
+export const comps: Map<string, any> = new Map<string, CompConfig<any>>(
+	riffsArray.map((riff) => [riff.id, riff])
+);
