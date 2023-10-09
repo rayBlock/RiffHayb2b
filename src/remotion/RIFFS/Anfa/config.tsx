@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { CompConfig } from '../../../types/remotion';
+import type { CompConfig } from '../../../types/types_remotion';
 import { Text } from '../../utils/schemas/text-schema';
 import { Color } from '../../utils/schemas/color-schema'
 import { Video } from '../../utils/schemas/video-schema'
@@ -10,7 +10,7 @@ import { img } from '../../utils/schemas/image-schema';
 const id = 'Anfa';
 const durationInFrames = 93;
 const minDurationFrames = durationInFrames - 20;
-const maxDurationFrames = durationInFrames + 100;
+const maxDurationFrames = durationInFrames + 15;
 
 export const inputPropsSchema = z
 	.object({

@@ -16,7 +16,7 @@ export function Remotion() {
 	const [state, setState] = useState<any>();
 	// const trpcUtils = trpc.useContext();
 
-	const renderMutation = trpc.render.render.useMutation({
+	const renderMutation = trpc.remotion.render.useMutation({
 		// onSettled: () => {
 		// 	queryClient.invalidateQueries(getQueryKey(trpc.prompts.getPrompts));
 		// },
@@ -26,16 +26,6 @@ export function Remotion() {
 		},
 	});
 
-	const weaverMutation = trpc.render.riffWeaver.useMutation({
-		// onSettled: () => {
-		// 	queryClient.invalidateQueries(getQueryKey(trpc.prompts.getPrompts));
-		// },
-		onSuccess: (promptId) => {
-			console.log(promptId, '<-  weaver success output');
-			setState(promptId);
-			// setTimeout(() => setSaved((x) => (x === promptId ? undefined : x)), 500);
-		},
-	});
 
 	const inputProps: riffInput = {
 		data: [
@@ -44,13 +34,13 @@ export function Remotion() {
 				comp: 0,
 				props: {vide: "https://player.vimeo.com/external/542127392.hd.mp4?s=cd9b2e359c1af1f8e1e3b48215f387e49d0cf8ba&profile_id=175&oauth2_token_id=57447761",color1: "white", sText: { text: 'hello world', fs: 20 }, name: 'textname', more: 'some', img: "https://plus.unsplash.com/premium_photo-1673721701740-20630b552a03?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80" },
 			},
-			{ duration: 30, comp: 2, props: { different: 'some', name: 'textname' } },
+			{ duration: 30, comp: 4, props: { direction:"open", angle:40, different: 'some', name: 'textname' } },
 			{
 				duration: 116,
 				comp: 1,
 				props: {vide: "https://player.vimeo.com/external/542127392.hd.mp4?s=cd9b2e359c1af1f8e1e3b48215f387e49d0cf8ba&profile_id=175&oauth2_token_id=57447761",color1: "lime", sText: { text: ' some world' }, name: 'textname', more: 'some', img: "https://images.unsplash.com/photo-1696172686863-c51dae18bbfd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80" },
 			},
-			{ duration: 30, comp: 3, props: { differentElse: 'some', name: 'diff', more: 'foo' } },
+			{ duration: 30, comp: 4, props: {direction:"close", angle:40, differentElse: 'some', name: 'diff'} },
 			{
 				duration: 124,
 				comp: 0,
@@ -62,7 +52,7 @@ export function Remotion() {
 
 	return (
 		<Layout>
-			{state ? <span className="text-white">{JSON.stringify(state)}</span> : 'null'}
+			{state ? <span className="text-white">{JSON.stringify(state)}</span> : null}
 			<div className="flex items-center justify-center gap-4 sm:flex-row ">
 				<Player
 					component={RiffGarden}
@@ -91,7 +81,7 @@ export function Remotion() {
 						};
 						// console.log(data, "formdata");
 						renderMutation.mutate(data);
-						weaverMutation.mutate({ duration: 10 });
+						// weaverMutation.mutate({ duration: '10', prompt: "hello", privacyLevel: "public" });
 						return;
 					}}
 				>

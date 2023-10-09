@@ -1,4 +1,4 @@
-import type { CompConfig } from '../types/remotion';
+import type { CompConfig } from '../types/types_remotion';
 import { AnfaRiff } from './RIFFS/Anfa/config';
 // import { JinjasRiff } from './RIFFS/Jinjas/config';
 // import { LilyRiff } from './RIFFS/Lily/config';

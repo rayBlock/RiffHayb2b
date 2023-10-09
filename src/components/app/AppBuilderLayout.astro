@@ -1,0 +1,17 @@
+---
+
+import Layout from '../../layouts/Layout.astro';
+import type { Props as SeoProps } from '../head/SEO.astro';
+
+export type Props = SeoProps;
+---
+
+<Layout {...Astro.props}>
+	<div class="relative flex min-h-screen flex-col bg-[#d3e0f6] justify-between gap-4">
+		<main class="relative grow">
+			<slot />
+		</main>
+		
+	</div>
+</Layout>
+

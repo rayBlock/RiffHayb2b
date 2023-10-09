@@ -29,7 +29,7 @@ export default async function getAiImages({ query, size }: props) {
 	const apiKey = process.env.STABILITY_API_KEY;
 
 	if (!apiKey) throw new Error('Missing Stability API key.');
-
+	console.log(query, "&&",size)
 	let dimWidth, dimHeight;
 
 	if (size === 'Square') {
@@ -84,6 +84,7 @@ export default async function getAiImages({ query, size }: props) {
 			// 1024x1024, 1152x896, 1216x832, 1344x768, 1536x640, 640x1536, 768x1344, 832x1216, 896x1152,
 			height: dimHeight,
 			width: dimWidth,
+			// TODO
 			samples: 3,
 			steps: 16,
 		}),
@@ -102,7 +103,7 @@ export default async function getAiImages({ query, size }: props) {
 	}
 
 	const responseJSON = (await response.json()) as GenerationResponse;
-	// console.log(responseJSON)
+
 
 	async function uploadFilesToS3(bucketName: string, response: any) {
 		const uploadedUrls = []; // Array to store the uploaded file URLs
@@ -125,7 +126,7 @@ export default async function getAiImages({ query, size }: props) {
 				const url = await getSignedUrl(
 					S3,
 					new GetObjectCommand({ Bucket: 'riff', Key: `imgs/${uniqueID}.png` }),
-					{ expiresIn: 3600 }
+					{ expiresIn: 404800 }
 				);
 
 				// const fileUrl = `https://${bucketName}.s3.amazonaws.com/${filePath}`; // Construct the S3 URL

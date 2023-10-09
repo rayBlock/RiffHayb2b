@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { CompConfig } from '../../../types/remotion';
+import type { CompConfig } from '../../../types/types_remotion';
 import { Text } from '../../utils/schemas/text-schema';
 import { SempaMotion, type SempaProps } from './Sempa';
 

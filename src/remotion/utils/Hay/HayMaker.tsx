@@ -2,7 +2,7 @@
 import zodToJsonSchema from 'zod-to-json-schema';
 import type { JsonSchema7ObjectType } from 'zod-to-json-schema/src/parsers/object';
 
-import type { CompConfig } from '../../../types/remotion';
+import type { CompConfig } from '../../../types/types_remotion';
 // import { JinjasMotion } from "../../RIFFS/Jinjas/Jinjas";
 // import { SempaMotion } from "../../RIFFS/Sempa/Sempa";
 // import { SubuMotion } from "../../RIFFS/Subu/Subu";
@@ -42,7 +42,7 @@ function getRandomArray(dimi: number, domi: number): number[] {
 export function HayMaker({ duration }: { duration: number }) {
 	// Get the number of key-value pairs in the comps Map
 	const aRiffs = Riffs.length;
-
+	console.log(duration)
 	function pickRiffs(duration: number) {
 		let nRiffs;
 

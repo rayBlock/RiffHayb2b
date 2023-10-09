@@ -14,28 +14,22 @@ const zExtractionSchema = z.object({
 		.array(
 			z
 				.string()
-				.describe('Very short copywriting sentence with variations of 3 - 5 words for the template')
+				.describe('Very short copywriting sentence with variations of 2 - 4 words for the video')
 		)
-		.describe('An array of 8 very short sentences'),
-	longS: z
-		.array(
-			z.string().describe('A copywriting sentence for the template with a maximum of 12 words')
-		)
-		.min(2)
-		.describe(
-			'An array with exactly 3 entries of sentences with a word count of 8 up to max 12 words'
-		),
-
+		.describe('An array of 10 very short sentences'),
 	midS: z
-		.array(z.string().describe('A short copywriting sentence for the template'))
-		.describe('An array with at least 4 sentences with a word count of 4 - 8 words'),
+		.array(z.string().describe('A short copywriting sentence for the video'))
+		.describe('An array with at least 7 sentences with a word count of 5 - 10 words'),
 
-	imgPrompts: z
-		.string()
+	imgPrompts: z.array(
+		z.string()
 		.min(8)
-		.describe('A description of an image in order to create an image for the template'),
-	videoPrompt: z.string().describe('very short and simple words for a matching shutter stock video'),
-	musicPrompt: z.string().describe('very short description for a music prompt'),
+		.describe('A description of an image in order to create an image for the video'),
+	).describe("An array of different image descriptions for the video ")
+	// videoPrompt: z
+	// 	.string()
+	// 	.describe('very short and simple words for a matching shutter stock video'),
+	// musicPrompt: z.string().describe('very short description for a music prompt'),
 });
 
 export default async function getTexts(userPrompt: string) {
@@ -45,15 +39,15 @@ export default async function getTexts(userPrompt: string) {
 			SystemMessagePromptTemplate.fromTemplate(`
              - You create copywriting sentences based on the {inputText} for marketing videos that people will use for advertisement. 
              - Your response is always in valid JSON format. Try to keep yourself short and answer in the laguage from the {inputText}.
-             - Create all the copywriting sentences in the correct Schema and try not to repeat yourself!
-             - Create 2 sentences for the longS array with minimum 10 words and maximum of 15 words.
-             - For the short Sentences in shortS array it is important to generate at least 6 sentences in the array for shortS with maximum of 5 words per sentence.
-             - At least 5 sentences for midS with 6 - 10 words.
-             - imgPrompts is a string always in english that describes what an image for such a video looks like. keep it precise to just the description of the image.
-             - musicPrompt is a string for a some music. example: Edo25 major g melodies that sound cinematic. Leading up to a crescendo that resolves in a 9th harmonic
+             - Create all the copywriting sentences in the correct Schema and be creative with your words.
+             - For the short Sentences in shortS array it is important to generate at least 10 sentences in the array for shortS with maximum of 5 words per sentence.
+             - At least 7 sentences for midS with 6 - 10 words.
+             - imgPrompts is an array of strings always in english that describes what an image would looks like. keep it precise to just the description of the image.
              `),
 			HumanMessagePromptTemplate.fromTemplate('{inputText}'),
 		],
+		//    - musicPrompt is a string for a some music. example: Edo25 major g melodies that sound cinematic. Leading up to a crescendo that resolves in a 9th harmonic
+
 		inputVariables: ['inputText'],
 	});
 	// console.log(prompt, "prmtp..  llm text get")

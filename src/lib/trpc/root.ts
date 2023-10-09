@@ -19,7 +19,7 @@ export const appRouter = createTRPCRouter({
 	prompts: promptsRouter,
 	settings: settingsRouter,
 	surveys: surveysRouter,
-	render: remotionRouter,
+	remotion: remotionRouter,
 });
 
 // export type definition of API

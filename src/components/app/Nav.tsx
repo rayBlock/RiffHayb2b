@@ -22,7 +22,7 @@ export function AppNav() {
 	const logout = useLogoutFunction();
 
 	const [path, setPath] = useState(undefined as undefined | string);
-	console.log(path, "pathius centradon")
+				path ? console.log(path) : console.log()
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
 			setPath(window.location.pathname);
@@ -60,8 +60,11 @@ export function AppNav() {
 					<NavLink to="/app" end className={navLinkClass}>
 						Home
 					</NavLink>
-					<NavLink to="/app/prompts" className={navLinkClass}>
-						Prompts
+					<NavLink to="/app/riffs" className={navLinkClass}>
+						Riffs
+					</NavLink>
+					<NavLink to="/build/riff/create" className={navLinkClass}>
+						Create
 					</NavLink>
 					<NavLink to="/app/settings" className={navLinkClass}>
 						Settings

@@ -1,13 +1,124 @@
-import { z } from 'astro/zod';
 
-import { HayMaker } from '../../../remotion/utils/Hay/HayMaker';
-import type { FrameSchema } from '../../../types/calculateFrames';
-import getAiImages from '../../llm/getStableDiffusionImages';
-import getTexts from '../../llm/llmTexts';
-import { calculateFrames } from '../../remotion/calcFrames';
-import { apiProcedure, createTRPCRouter } from '../trpc';
+import type { User } from '@propelauth/node';
+
+import { eq} from 'drizzle-orm';
+import { nanoid } from 'nanoid';
+import { z } from 'zod';
+
+import type { PrivacyLevel } from '../../../components/app/utils';
+
+// import { riffLikes, sharedKeyRatelimit } from '../../../db/schema';
+import { usersToPublicUserInfo } from '../../../pages/api/orgs/[orgId]';
+// import { serverEnv } from '../../../t3-env';
+
+import { propelauth } from '../../propelauth';
+
+import { apiProcedure, createTRPCRouter, orgProcedure } from '../trpc';
+
+import { db } from '../../../db/db';
+import { riffs } from '../../../db/schema';
+
+import { TRPCError } from '@trpc/server';
+import { riffWeaver } from '../../remotion/riffWeaver';
+
+
+// const messageSchema = z.object({
+// 	role: z.union([z.literal('user'), z.literal('assistant'), z.literal('system')]),
+// 	content: z.string(),
+// });
+// type Message = z.infer<typeof messageSchema>;
+const privacyLevelSchema = z.union([
+	z.literal('public'),
+	z.literal('team'),
+	z.literal('unlisted'),
+	z.literal('private'),
+]);
+export type PromptPrivacyLevel = z.infer<typeof privacyLevelSchema>;
 
 export const remotionRouter = createTRPCRouter({
+	getRiff: apiProcedure
+		.input(
+			z.object({
+				riffId: z.string(),
+			})
+		)
+		.query(async ({ input, ctx }) => {
+			const user = await ctx.userPromise;
+			const userData = user.kind === 'ok' ? user.user : undefined;
+
+			const userId = userData?.userId;
+			const res = await db
+				.select({
+					riffId: riffs.riffId,
+					inputs: riffs.inputs,
+					userId: riffs.userId,
+					orgId: riffs.orgId,
+					privacyLevel: riffs.privacyLevel,
+					title: riffs.title,
+					description: riffs.description,
+					tags: riffs.tags,
+					// createdAt: riffs.createdAt,
+					// updatedAt: riffs.updatedAt,
+					// likes: sql<number>`count(${riffLikes.userId})::int`,
+					// myLike: sql<boolean>`SUM(CASE WHEN ${riffLikes.userId} = (${
+					// 	userId || null
+					// })::text THEN 1 ELSE 0 END) > 0`,
+
+				})
+				.from(riffs)
+
+				.where(eq(riffs.riffId, input.riffId));
+
+			const originalRiff = res[0];
+			if (!originalRiff) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: `Prompt ${input.riffId} not found`,
+				});
+			}
+			const validPrivacyLevel = privacyLevelSchema.safeParse(originalRiff.privacyLevel);
+			const riffy = {
+				...originalRiff,
+				privacyLevel: validPrivacyLevel.success ? validPrivacyLevel.data : 'private',
+			};
+
+			const error = checkAccessToPrompt(riffy, userData);
+			if (error) {
+				if (error === 'UNAUTHORIZED') {
+					throw new TRPCError({
+						code: 'UNAUTHORIZED',
+						message: `You need to sign in to access this prompt`,
+					});
+				} else {
+					throw new TRPCError({
+						code: 'FORBIDDEN',
+						message: `You don't have access to this prompt`,
+					});
+				}
+			}
+			const users = await resolvePropelPublicUsers([riffy.userId]);
+			const author = users.kind === 'ok' ? users.users[riffy.userId] : undefined;
+			if (!author) {
+				console.error('Error fetching users', users);
+			}
+			const {inputs, title,  ...rest } = riffy;
+
+			// const validTags = z.array(z.string()).safeParse(tags);
+
+			return {
+				canEdit: riffy.userId === userId,
+				riff: riffy,
+				prompt: {
+					...rest,
+					title: riffy.title
+					// tags: validTags.success ? validTags.data : [],
+				},
+				author,
+				shareUrl: new URL(ctx.req.url).origin + '/app/riff/' + riffy.riffId,
+				publicUrl: new URL(ctx.req.url).origin + '/videos/' + riffy.riffId,
+			};
+		}),
+
 	render: apiProcedure
 		.input(
 			z.object({
@@ -26,297 +137,131 @@ export const remotionRouter = createTRPCRouter({
 			return 'Something from the server remotion trpc';
 		}),
 
-	riffWeaver: apiProcedure
+	createRiff: orgProcedure
 		.input(
 			z.object({
-				duration: z.number(),
+				duration: z.string(),
+				title: z.string().optional(),
+				description: z.string().optional(),
+				// tags: z.array(z.string()).optional(),
+				privacyLevel: privacyLevelSchema,
+				prompt:z.string(),
+				orientation: z.string()
 			})
 		)
 		.mutation(async ({ ctx, input }) => {
 			const res = await ctx.userPromise;
 
 			if (res.kind === 'ok') {
-				const llmSchemaData = await getTexts('I need a video for my hats for cats that I sell  ');
-				console.log(llmSchemaData, 'llm');
-				const prepInputs = HayMaker({ duration: 10 });
 
-				const transformedData: any = [];
-
-
-				const images: string[] | void = await getAiImages({
-					query: llmSchemaData?.output.imgPrompts,
-					size: 'Portrait',
-				});
-				// const client = pexelClient;
-
-				// const query: any = llmSchemaData?.output.videoPrompt;
-
-				// let pxlVids: any = [];
-				// console.log('hell');
-
-				// client.videos.search({ query:"nature", per_page: 3 }).then((videos:any) => console.log(videos, "videos ??"));
-
-				// async function pxlGet():Promise<any> {
-				// 	await client.videos
-				// 		.search({ query, per_page: 4,  })
-				// 		.then((videos: any) => {
-				// 			console.log(videos, 'then videos ??');
-				// 			videos.forEach((video: any) => {
-				// 				const videoFiles = video.video_files;
-				// 				videoFiles.forEach((videoFile: any) => {
-				// 					const link = videoFile.link;
-				// 					pxlVids.push(link);
-				// 					console.log(link, 'link');
-				// 				});
-				// 			});
-				// 		});
-				// }
-				// console.log(pxlVids, '...  some gdmmns videos');
-				// const so = await pxlGet();
-				// console.log(so, 'soo??');
-
-				const array1 = prepInputs.pickedRiffs!;
-				const array2 = prepInputs.traversePick!;
-
-				// Initialize the result array.
-				const arrayWoven = [];
-
-				// Determine the length of the resulting array.
-				const maxLength = Math.max(array1.length, array2.length);
-
-				// Loop through both arrays and weave their elements together.
-				for (let i = 0; i < maxLength; i++) {
-					if (i < array1.length) {
-						arrayWoven.push(array1[i]);
-					}
-					if (i < array2.length) {
-						arrayWoven.push(array2[i]);
-					}
-				}
-
-				interface CalculationProps {
-					durationInFrames: number;
-					minDurationFrames: number;
-					maxDurationFrames: number;
-				}
-
-				function extractRiffsFrameDurations(inputArray: any[]): CalculationProps[] {
-					const durationsFrames: CalculationProps[] = inputArray.map((item) => {
-						const { durationInFrames, minDurationFrames, maxDurationFrames } = item;
-						return { durationInFrames, minDurationFrames, maxDurationFrames };
-					});
-
-					return durationsFrames;
-				}
-
-				const durationsArray: CalculationProps[] = extractRiffsFrameDurations(
-					prepInputs.mergedInputProps
-				);
-
-				const seekedDuration = input.duration * 30;
-
-				const frameCount: any | FrameSchema[] | Error = calculateFrames({
-					props: durationsArray,
-					seekedDuration,
-					locked: [],
-					traverseDuration: 20,
-					// You can also provide the locked and traversFrames properties if needed
+				const inputs = await riffWeaver({prompt:input.prompt, duration:input.duration, orientation:input.orientation })
+				const title = input.title || 'Untitled';
+				const description = input.description || '';
+				// const tags = (input.tags || []).map((x) => x.trim()).filter((x) => x.length > 0);
+				const uRiff_Id = nanoid();
+				console.log(inputs.data[1], "1",inputs.data[3], "2")
+				await db.insert(riffs).values({
+					riffId: uRiff_Id,
+					inputs:inputs,
+					title,
+					description,
+					orgId: ctx.requiredOrgId,
+					userId: ctx.user.userId,
+					privacyLevel: input.privacyLevel,
+					//TODO --> add the llmText & Images intoDB
 				});
 
-				let propsIndex = 0;
-				let shortIndex = 0;
-				let midIndex = 0;
-				let longIndex = 0;
-
-				let imageIndex: number = 0;
-				// let videoIndex: number = 0;
-
-				const propertyNames = ['short', 'mid', 'long'];
-				const otherPropsNames = ['images', 'colors'];
-				//  'videos'
-
-				// let pexelVids: string[] = [];
-
-				prepInputs.mergedInputProps.forEach((item: any, index: any) => {
-					const { name, minDurationFrames, maxDurationFrames }: any = item;
-
-					const keys: any = {};
-
-					debugger;
-
-					otherPropsNames.forEach((otherProps) => {
-						if (item[otherProps]) {
-							item[otherProps].forEach((nestedObj: any) => {
-								console.log(nestedObj, 'nestedOtherObj');
-								let keyProp = Object.keys(nestedObj);
-								if (keyProp.length > 0) {
-									const keyName: string = keyProp[0] as string;
-									switch (otherProps) {
-										case 'images':
-											keys[keyName] = images ? images[imageIndex] : undefined; // Added a ternary operator
-
-											// !keys[keyName]
-											// 	? console.log(keys[keyName], 'images failed ...')
-											// 	: console.log(keys, 'lots of keys logs');
-											// const photoResponse = await pexClient.photos.search({
-											// 	query,
-											// 	per_page: 15,
-											// 	page: 1,
-											// 	orientation: dimension,
-											// 	size: 'medium',
-											// });
-
-											imageIndex++;
-											break;
-
-										// case 'videos':
-										// 	console.log(videoIndex, '<-- video Index ');
-
-										// 	const fetchVideos = async () => {
-										// 		try {
-										// 			const vids: any = await client.videos.search({
-										// 				query,
-										// 				orientation: 'portrait',
-										// 				per_page: 3,
-										// 			});
-										// 			console.log(vids, 'viiiis');
-										// 			return vids; // Return the fetched videos
-										// 		} catch (error) {
-										// 			console.error(error, 'error');
-										// 			return []; // Return an empty array in case of an error
-										// 		}
-										// 	};
-
-										// 	const processVideos = async () => {
-										// 		if (videoIndex === 0) {
-										// 			try {
-										// 				const some = await fetchVideos(); // Use await to get the fetched videos
-										// 				console.log(some.videos, 'some videos mlord');
-										// 				some.videos.forEach((video: any) => {
-										// 					const videoFiles = video.video_files;
-										// 					videoFiles.forEach((videoFile: any) => {
-										// 						const link = videoFile.link;
-										// 						pexelVids.push(link);
-										// 					});
-										// 				});
-										// 			} catch (error) {
-										// 				console.error(error, 'error');
-										// 			}
-										// 		}
-										// 	};
-
-										// 	// Call the async function to start video processing
-										// 	processVideos();
-										// 	console.log(pexelVids, 'pexl vidos');
-										// 	keys[keyName] = pexelVids[videoIndex] as any;
-										// 	console.log(keys, 'keys mit opexel ???');
-										// 	videoIndex++;
-										// 	break;
-
-										case 'colors':
-											// keys[keyName] = {text: llmSchemaData?.output.longS[longIndex]};
-											console.log(keyName);
-											const propertiesObject = nestedObj;
-											// console.log(propertiesObject, 'prop color object');
-											for (const propName in propertiesObject) {
-												if (propertiesObject.hasOwnProperty(propName)) {
-													const property = propertiesObject[propName];
-
-													keys[propName] = property;
-												}
-											}
-
-											break;
-										default:
-											break;
-									}
-								}
-							});
-						}
-					});
-
-					propertyNames.forEach((propertyName) => {
-						if (item[propertyName]) {
-							item[propertyName].forEach((nestedObj: any) => {
-								let keyProp = Object.keys(nestedObj);
-								if (keyProp.length > 0) {
-									const keyName: string = keyProp[0] as string;
-									switch (propertyName) {
-										case 'short':
-											keys[keyName] = { text: llmSchemaData?.output.shortS[shortIndex] };
-											shortIndex++;
-											break;
-										case 'mid':
-											keys[keyName] = { text: llmSchemaData?.output.midS[midIndex] };
-											midIndex++;
-											break;
-										case 'long':
-											keys[keyName] = { text: llmSchemaData?.output.longS[longIndex] };
-											longIndex++;
-											break;
-									}
-
-									const propertiesObject = nestedObj[keyName].properties;
-									for (const propName in propertiesObject) {
-										if (propertiesObject.hasOwnProperty(propName)) {
-											const property = propertiesObject[propName];
-											if (property.hasOwnProperty('default')) {
-												const defaultValue = property.default;
-												// Assign the extracted property to the corresponding key
-												keys[keyName][propName] = defaultValue;
-											}
-										}
-									}
-								}
-							});
-						}
-					});
-
-					transformedData.push({
-						name: name,
-						duration: frameCount[index].durationInFrames,
-						min: minDurationFrames,
-						max: maxDurationFrames, // Customize this based on your data structure
-						comp: prepInputs.pickedRiffs![index], // Use 'pickedRiffs' to get the 'comp' value
-						props: keys,
-						// props: props, // Use the 'props' object created above
-					});
-					if (propsIndex < prepInputs.mergedInputProps.length - 1) {
-						transformedData.push({
-							// props for transition ...
-							duration: 20,
-							//  duration: durationsArray[propsIndex]!.duration,
-							comp: prepInputs.traversePick![index],
-							props: {},
-							// different props for transitions depending on index
-							//   props: propsArray[propsIndex].props,
-						});
-						propsIndex++;
-					}
-				});
-				console.log(transformedData, 'transformed');
-				const inputProps = {
-					data: transformedData,
-					// images: images,
-					// text: llmSchemaData,
-				};
-
-				// function combineInputProps(inputProps: any) {
-				// 	const { data, images, text }: any = inputProps;
-
-				// 	console.log(data.length, 'length of data array');
-
-				// 	// console.log(data, "data")
-				// 	// console.log(images, "imgs")
-				// 	// console.log(text, "text")
-
-				// 	return inputProps;
-				// }
-
-				// const stitchedProps = combineInputProps(inputProps);
-
-				return inputProps;
+				return uRiff_Id;
 			}
 			return 'failed ';
 		}),
 });
+
+// const period = 1000 * 5; // 5 seconds
+// const period = 1000 * 60 * 60 * 24 * 7; // 7 Days
+// const limit = 5;
+
+// function rateLimitSharedKeyId(userId: string, currentTimestamp: number) {
+// 	return `shared_key:${userId}:${Math.floor(currentTimestamp / period)}`;
+// }
+
+// function rateLimitSharedKeyResetsAt(currentTimestamp: number) {
+// 	return Math.ceil(currentTimestamp / period) * period;
+// }
+
+/**
+ * @returns the number of requests remaining
+ */
+// async function rateLimitUpsert(userId: string, currentTimestamp: number) {
+// 	// will do UPSERT
+// 	const result = await db
+// 		.insert(sharedKeyRatelimit)
+// 		.values({
+// 			limitId: rateLimitSharedKeyId(userId, currentTimestamp),
+// 			value: 1,
+// 		})
+// 		.onConflictDoUpdate({
+// 			target: sharedKeyRatelimit.limitId,
+// 			set: {
+// 				value: sql`${sharedKeyRatelimit.value} + 1`,
+// 			},
+// 		})
+// 		.returning({
+// 			value: sharedKeyRatelimit.value,
+// 		});
+// 	const first = result[0];
+// 	if (!first) {
+// 		throw new Error('No result from UPSERT');
+// 	}
+
+// 	// +1 to get the value that we had before the UPSERT
+// 	return limit - first.value + 1;
+// }
+
+function resolvePropelAuthUsers(userIds: string[]) {
+	return propelauth
+		.fetchBatchUserMetadataByUserIds(userIds)
+		.then((users) => ({ kind: 'ok' as const, users }))
+		.catch((error) => ({ kind: 'error' as const, error }));
+}
+
+function resolvePropelPublicUsers(userIds: string[]) {
+	return resolvePropelAuthUsers(userIds).then((result) => {
+		if (result.kind === 'ok') {
+			return { ...result, users: usersToPublicUserInfo(result.users) };
+		}
+		return result;
+	});
+}
+
+function checkAccessToPrompt(
+	riffy: { riffId: string; privacyLevel: PrivacyLevel; userId: string; orgId: string },
+	user: User | undefined
+) {
+	const privacyLevel = riffy.privacyLevel;
+
+	// everyone can access public and unlisted prompts
+	if (privacyLevel === 'public' || privacyLevel === 'unlisted') {
+		return undefined;
+	}
+	// you need to be signed in to access private or team prompts
+	if (!user) {
+		return 'UNAUTHORIZED';
+	}
+	// owners can access their own prompts
+	if (riffy.userId === user.userId) {
+		return undefined;
+	}
+	// no one else can access private prompts
+	if (privacyLevel === 'private') {
+		return 'FORBIDDEN';
+	}
+	// you need to be in the same team to access team prompts
+	if (privacyLevel === 'team') {
+		const hasAccess = user.orgIdToOrgMemberInfo?.[riffy.orgId] !== undefined;
+		if (hasAccess) {
+			return undefined;
+		}
+	}
+	return 'FORBIDDEN';
+}

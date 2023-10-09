@@ -1,11 +1,11 @@
 import type { UseAuthInfoLoggedInProps } from '@propelauth/react/types/useAuthInfo';
-import { useQueryClient } from '@tanstack/react-query';
-import { getQueryKey } from '@trpc/react-query';
-import clsx from 'clsx';
-import { useReducer, useState } from 'react';
+// import { useQueryClient } from '@tanstack/react-query';
+// import { getQueryKey } from '@trpc/react-query';
+// import clsx from 'clsx';
+// import { useReducer, useState } from 'react';
 
-import { env } from '../../config';
-import { websiteTitle } from '../../constants';
+// import { env } from '../../config';
+// import { websiteTitle } from '../../constants';
 import { apiServer, useMutation } from '../client';
 import { useRequireActiveOrg } from '../propelauth';
 import { useAuthInfo } from '../propelauth';
@@ -16,13 +16,13 @@ export function Settings() {
 	const { activeOrg } = useRequireActiveOrg();
 	const orgId = activeOrg?.orgId;
 
-	const keysQuery = trpc.settings.getKeys.useQuery(
-		{ orgId: orgId || '' },
-		{
-			enabled: !!orgId,
-			staleTime: 1000,
-		}
-	);
+	// const keysQuery = trpc.settings.getKeys.useQuery(
+	// 	{ orgId: orgId || '' },
+	// 	{
+	// 		enabled: !!orgId,
+	// 		staleTime: 1000,
+	// 	}
+	// );
 
 	const { data: subscriptions } = trpc.settings.getSubscriptions.useQuery(
 		{ orgId: orgId || '' },
@@ -40,27 +40,27 @@ export function Settings() {
 		}
 	);
 
-	const queryClient = useQueryClient();
-	const addKeyMutation = trpc.settings.createKey.useMutation({
-		onSettled: () => {
-			queryClient.invalidateQueries(getQueryKey(trpc.settings.getKeys));
-		},
-	});
-	const deleteKeyMutation = trpc.settings.deleteKey.useMutation({
-		onSuccess: (data) => {
-			queryClient.setQueryData(
-				getQueryKey(trpc.settings.getKeys, undefined, 'query'),
-				(oldData: typeof keysQuery.data) => oldData?.filter((item) => item.keyId !== data.keyId)
-			);
-		},
-		onSettled: () => {
-			queryClient.invalidateQueries(getQueryKey(trpc.settings.getKeys));
-		},
-	});
+	// const queryClient = useQueryClient();
+	// const addKeyMutation = trpc.settings.createKey.useMutation({
+	// 	onSettled: () => {
+	// 		queryClient.invalidateQueries(getQueryKey(trpc.settings.getKeys));
+	// 	},
+	// });
+	// const deleteKeyMutation = trpc.settings.deleteKey.useMutation({
+	// 	onSuccess: (data) => {
+	// 		queryClient.setQueryData(
+	// 			getQueryKey(trpc.settings.getKeys, undefined, 'query'),
+	// 			(oldData: typeof keysQuery.data) => oldData?.filter((item) => item.keyId !== data.keyId)
+	// 		);
+	// 	},
+	// 	onSettled: () => {
+	// 		queryClient.invalidateQueries(getQueryKey(trpc.settings.getKeys));
+	// 	},
+	// });
 
-	const [showAddKey, toggleShowAddKey] = useReducer((state) => !state, false);
+	// const [showAddKey, toggleShowAddKey] = useReducer((state) => !state, false);
 
-	const [submitOk, setSubmitOk] = useState(false);
+	// const [submitOk, setSubmitOk] = useState(false);
 
 	const auth = useAuthInfo();
 
@@ -79,16 +79,15 @@ export function Settings() {
 	});
 
 	return (
-		<Layout title={`${websiteTitle} / Settings`}>
+		<Layout title={`Settings`}>
 			{stripeConfigured ? (
-				<div className="mt-4">
-					In order to run prompts, you can either add your OpenAI key below, or purchase a
-					subscription.
+				<div className="mt-4 text-2xl ">
+					Subscribe to a Plan 
 				</div>
 			) : (
-				<div className="mt-4">In order to run prompts, you have to add your OpenAI key below.</div>
+				<div className="mt-4">Thank you for your subscription</div>
 			)}
-			<div className="mt-4 rounded-md border border-gray-300 px-4 py-8 sm:px-6 lg:px-8">
+			{/* <div className="mt-4 rounded-md border border-gray-300 px-4 py-8 sm:px-6 lg:px-8">
 				<div className="flex w-full flex-col items-center justify-center">
 					<div className="flex w-full flex-col gap-2 text-start">
 						<div className="sm:flex sm:items-center">
@@ -306,7 +305,7 @@ export function Settings() {
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> */}
 			{stripeConfigured && (
 				<div className="mt-4 rounded-md border border-gray-300 px-4 py-8 sm:px-6 lg:px-8">
 					<div className="flex w-full flex-col items-center justify-center">

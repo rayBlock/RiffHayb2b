@@ -97,7 +97,6 @@ function addFramesToRiff(props: FrameSchema[], addFrames: number): FrameSchema[]
 			'Invalid arguments. props must be a non-empty array and addFrames must be a positive number.'
 		);
 	}
-  console.log(props)
 	// Check if addFrames is divisible by props.length without leaving any remainder
 	const isDivisible = addFrames % props.length === 0;
 

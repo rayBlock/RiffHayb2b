@@ -30,10 +30,10 @@ import { inputPropsSchema } from './config';
 
 export type AnfaProps = z.infer<typeof inputPropsSchema>;
 
-export function AnfaMotion({ sText, img, color1, vide }: AnfaProps) {
+export function AnfaMotion({ sText, img, color1 }: AnfaProps) {
 	const frame = useCurrentFrame();
 	const { width, height, durationInFrames } = useVideoConfig();
-	 console.log(vide, "vide ??")
+
 	// console.log(image1, "prosp")
 	const animation = interpolate(frame, [0, durationInFrames * 0.8], [-200, 100], {
 		extrapolateLeft: 'clamp',

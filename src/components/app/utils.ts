@@ -87,7 +87,7 @@ export const useRedirectToYourProduct = () => {
 			localStorage.getItem('returnUrl');
 		sessionStorage.removeItem('returnUrl');
 		localStorage.removeItem('returnUrl');
-		console.log('redirecting to ', returnUrl);
+		// console.log('redirecting to ', returnUrl);
 		window.location.href = returnUrl || '/app';
 	}, []);
 	return { redirectToYourProduct };

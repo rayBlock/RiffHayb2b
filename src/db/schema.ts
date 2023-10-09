@@ -35,7 +35,19 @@ export const prompts = pgTable('prompts', {
 	createdAt: timestamp('created_at').notNull().defaultNow(),
 	updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
-
+export const riffs = pgTable('riffs', {
+	riffId: text('riff_Id').primaryKey(),
+	inputs: json('inputs').notNull(),
+	userId: text('user_Id').notNull(),
+	orgId: text('org_Id').notNull(),
+	title: text('title'),
+	description: text('description').default(''),
+	tags: json('tags'),
+	privacyLevel: text('privacy_level').notNull(),
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updatedAt: timestamp('updated_at'),
+	
+});
 /* ```sql
 ALTER TABLE prompt_likes ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "service" ON "public"."prompt_likes" AS PERMISSIVE FOR ALL TO service_role USING (true);
@@ -49,6 +61,18 @@ export const promptLikes = pgTable(
 	},
 	(table) => {
 		return { pk: primaryKey(table.promptId, table.userId) };
+	}
+);
+
+export const riffLikes = pgTable(
+	'riff_likes',
+	{
+		riffId: text('riff_id').notNull(),
+		userId: text('user_id').notNull(),
+		createdAt: timestamp('created_at').notNull().defaultNow(),
+	},
+	(table) => {
+		return { pk: primaryKey(table.riffId, table.userId) };
 	}
 );
 

@@ -9,8 +9,7 @@ export const Pan: React.FC<
 > = ({ direction = 'left', progress, exitingElement = null, enteringElement = null }) => {
 	const sign = direction === 'right' || direction === 'down' ? 1 : -1;
 	const percentComplete = 100 * progress;
-	const translateFunction =
-		direction === 'right' || direction === 'left' ? 'translateX' : 'translateY';
+	const translateFunction = direction === 'right' || direction === 'left' ? 'translateX' : 'translateY';
 	return (
 		<>
 			<div

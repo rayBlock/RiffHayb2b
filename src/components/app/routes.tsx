@@ -5,11 +5,12 @@ import { Outlet, type RouteObject } from 'react-router-dom';
 import { env } from '../../config';
 import type { Helpers } from '../../lib/trpc/root';
 import { AuthSync } from '../AuthSync';
-import { FullPageSupport, SupportWidget } from '../fogbender/Support';
+import { FullPageSupport } from '../fogbender/Support';
 import { AuthProvider } from '../propelauth';
 import type { RouterUtils } from '../trpc';
 import { App } from './App';
 import { CreatePrompt } from './CreatePrompt';
+import { CreateRiff } from './CreateRiff';
 import { EditPrompt } from './EditPrompt';
 import { AppNav } from './Nav';
 import { Prompt } from './Prompt';
@@ -17,6 +18,7 @@ import { Prompts } from './Prompts';
 import { Remotion } from './Remotion';
 import { Settings } from './Settings';
 import { propelAuthAtom } from './store';
+import { Riff } from './Riff';
 
 export const routes: RemixBrowserContext & RouteObject[] = [
 	{
@@ -26,7 +28,7 @@ export const routes: RemixBrowserContext & RouteObject[] = [
 			if (promptId) {
 				// pre-fetch in SSR is done oustide of the loader in .astro file
 				// pre-fetch in browser
-				await routes.trpcUtils?.prompts.getPrompt.ensureData({ promptId }).catch(() => {});
+				await routes.trpcUtils?.prompts.getPrompt.ensureData({ promptId }).catch(() => { });
 			}
 			return null;
 		},
@@ -43,7 +45,7 @@ export const routes: RemixBrowserContext & RouteObject[] = [
 					<AuthSync />
 					<AppNav />
 					<Outlet />
-					<SupportWidget kind="floatie" />
+					{/* <SupportWidget kind="floatie" /> */}
 				</AuthProvider>
 			);
 		},
@@ -60,11 +62,27 @@ export const routes: RemixBrowserContext & RouteObject[] = [
 					// pre-fetch in SSR
 					await context?.helpers.prompts.getPrompts.prefetch({});
 					// pre-fetch in browser
-					await routes.trpcUtils?.prompts.getPrompts.ensureData({}).catch(() => {});
+					await routes.trpcUtils?.prompts.getPrompts.ensureData({}).catch(() => { });
 					return null;
 				},
 				Component() {
 					return <Prompts />;
+				},
+			},
+			{
+				path: '/app/riff/:riffId',
+				loader: async ({ context, params }) => {
+					const riffId = params.riffId;
+					if (riffId) {
+						// pre-fetch in SSR
+						await context?.helpers.remotion.getRiff.prefetch({ riffId });
+						// pre-fetch in browser
+						await routes.trpcUtils?.remotion.getRiff.ensureData({ riffId }).catch(() => { });
+					}
+					return null;
+				},
+				Component() {
+					return <Riff />;
 				},
 			},
 			{
@@ -75,7 +93,7 @@ export const routes: RemixBrowserContext & RouteObject[] = [
 						// pre-fetch in SSR
 						await context?.helpers.prompts.getPrompt.prefetch({ promptId });
 						// pre-fetch in browser
-						await routes.trpcUtils?.prompts.getPrompt.ensureData({ promptId }).catch(() => {});
+						await routes.trpcUtils?.prompts.getPrompt.ensureData({ promptId }).catch(() => { });
 					}
 					return null;
 				},
@@ -89,6 +107,7 @@ export const routes: RemixBrowserContext & RouteObject[] = [
 					return <Remotion />;
 				},
 			},
+			
 			{
 				path: '/app/prompts/:promptId/edit',
 				Component() {
@@ -113,6 +132,60 @@ export const routes: RemixBrowserContext & RouteObject[] = [
 					return <FullPageSupport />;
 				},
 			},
+		],
+	},
+
+
+
+
+
+
+
+
+	{
+		path: '/build',
+		Component() {
+			const key = useAtomValue(propelAuthAtom);
+			return (
+				<AuthProvider key={key} authUrl={env.PUBLIC_AUTH_URL}>
+					<AuthSync />
+					{/* <AppNav /> */}
+					<Outlet />
+					{/* <SupportWidget kind="floatie" /> */}
+				</AuthProvider>
+			);
+		},
+		children: [
+			{
+				index: true,
+				Component() {
+					return <App />;
+				},
+			},
+			
+			{
+				path: '/build/riff/:riffId',
+				loader: async ({ context, params }) => {
+					const riffId = params.riffId;
+					if (riffId) {
+						// pre-fetch in SSR
+						await context?.helpers.remotion.getRiff.prefetch({ riffId });
+						// pre-fetch in browser
+						await routes.trpcUtils?.remotion.getRiff.ensureData({ riffId }).catch(() => { });
+					}
+					return null;
+				},
+				Component() {
+					return <Riff />;
+				},
+			},
+			{
+				path: '/build/riff/create',
+				Component() {
+					return <CreateRiff />;
+				},
+			},
+			
 		],
 	},
 ];

@@ -14,26 +14,27 @@ import { Pan } from './utils/remotion-flow/traverse/Pan';
 import { Slide } from './utils/remotion-flow/traverse/Slide';
 import { SlidingDoors } from './utils/remotion-flow/traverse/SlidingDoors';
 
-export const TransitionComponents = {
-	dissolve: Dissolve,
-	fadeThroughColor: FadeThroughColor,
-	pan: Pan,
-	slide: Slide,
-	slidingDoors: SlidingDoors,
-	linearWipe: LinearWipe,
-	circularWipe: CircularWipe,
-	// Add any other transition components here...
-};
 
-const TransitionDecider = (props: any, i: number): any => {
+// export const TransitionComponents = {
+// 	dissolve: Dissolve,
+// 	fadeThroughColor: FadeThroughColor,
+// 	pan: Pan,
+// 	slide: Slide,
+// 	slidingDoors: SlidingDoors,
+// 	linearWipe: LinearWipe,
+// 	circularWipe: CircularWipe,
+// 	// Add any other transition components here...
+// };
+
+const TransitionDecider = (props: any, i: number, inputProps: any): any => {
 	const transitionArray = [
-		<Slide {...props} />,
+		<Slide {...props} {...inputProps} />,
 		<Dissolve {...props} />,
-		<FadeThroughColor color="#D1D5DB" {...props} />,
-		<Pan {...props} />,
-		<SlidingDoors {...props} />,
-		<LinearWipe angle={46} {...props} />,
-		<CircularWipe {...props} />,
+		<FadeThroughColor {...props} {...inputProps} />,
+		<Pan {...props } {...inputProps} />,
+		<SlidingDoors {...props} {...inputProps} />,
+		<LinearWipe  {...props} {...inputProps} />,
+		<CircularWipe {...props} {...inputProps} />,
 	];
 	return transitionArray[i];
 };
@@ -70,7 +71,7 @@ export function RiffGarden(inputProps: riffInput) {
 	// aa   the 2 arrays stitched together ...
 	// the correct props
 	//  correct durationInfFrames
-
+	// console.log(inputProps, "all the props")
 	return (
 		<TransitionSeries>
 			{inputProps.data.map((item, i) =>
@@ -83,7 +84,7 @@ export function RiffGarden(inputProps: riffInput) {
 					<TransitionSeries.Transition
 						key={i}
 						durationInFrames={item.duration}
-						transitionComponent={(s) => TransitionDecider(s, item.comp)}
+						transitionComponent={(s) => TransitionDecider(s, item.comp, item.props)}
 					/>
 				)
 			)}
