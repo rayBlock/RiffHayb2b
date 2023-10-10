@@ -16,12 +16,12 @@ export const inputPropsSchema = z
 	.object({
 		name: z.string().default('Anfa'),
 		sText: Text.extend({ fs: z.number().default(44) }).describe('short'),
-		mText: Text.extend({ fs: z.number().default(44) }).describe('mid'),
-		longText: Text.extend({ fs: z.number().default(44) }).describe('long'),
-		color1: Color.default("red"),
+		sText2: Text.extend({ fs: z.number().default(55) }).describe('short'),
+
+		mText: Text.extend({ fs: z.number().default(66) }).describe('mid'),
+		color1: Color,
 		// color2: Color.default('red'),
 		color3: Color.default('lime'),
-
 
 		img: img,
 		vide: Video

@@ -57,6 +57,9 @@ export const remotionRouter = createTRPCRouter({
 					title: riffs.title,
 					description: riffs.description,
 					tags: riffs.tags,
+
+//  TODO :: more props to come 
+
 					// createdAt: riffs.createdAt,
 					// updatedAt: riffs.updatedAt,
 					// likes: sql<number>`count(${riffLikes.userId})::int`,
@@ -101,18 +104,18 @@ export const remotionRouter = createTRPCRouter({
 			if (!author) {
 				console.error('Error fetching users', users);
 			}
-			const {inputs, title,  ...rest } = riffy;
+
 
 			// const validTags = z.array(z.string()).safeParse(tags);
-
+				// TODO get in orden
 			return {
 				canEdit: riffy.userId === userId,
 				riff: riffy,
-				prompt: {
-					...rest,
-					title: riffy.title
-					// tags: validTags.success ? validTags.data : [],
-				},
+				// prompt: {
+				// 	...rest,
+				// 	title: riffy.title
+				// 	// tags: validTags.success ? validTags.data : [],
+				// },
 				author,
 				shareUrl: new URL(ctx.req.url).origin + '/app/riff/' + riffy.riffId,
 				publicUrl: new URL(ctx.req.url).origin + '/videos/' + riffy.riffId,
@@ -168,7 +171,7 @@ export const remotionRouter = createTRPCRouter({
 					orgId: ctx.requiredOrgId,
 					userId: ctx.user.userId,
 					privacyLevel: input.privacyLevel,
-					//TODO --> add the llmText & Images intoDB
+					//TODO --> add the llmText & Images intoDB && duration && orientation
 				});
 
 				return uRiff_Id;

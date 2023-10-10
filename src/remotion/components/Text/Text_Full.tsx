@@ -66,7 +66,8 @@ const defaultProps: TextArgs = {
 	borderStyle: 'none',
 	borderColor: 'black',
 	borderRadius: 0,
-	fs: 24,
+	fs: 55,
+	lineHeight: 60,
 	color: 'white',
 	stroke: 0,
 	strokeColor: 'black',
@@ -90,6 +91,7 @@ const defaultProps: TextArgs = {
 	decorationW: 0,
 	transform: 'none',
 	transformer: '',
+	
 };
 
 export const Text_A: React.FC<TextProps> = ({
@@ -100,7 +102,6 @@ export const Text_A: React.FC<TextProps> = ({
 }) => {
 	const mergedProps = Object.assign({}, defaultProps, props); // Merge default props with provided props
 	const [selected, setSelected] = useState(false);
-
 	return (
 		<p
 			onClick={() => (setSelected(!selected), console.log(selected, 'select'))}
@@ -130,8 +131,9 @@ export const Text_A: React.FC<TextProps> = ({
 				textShadow: `${mergedProps.shadowOffsetX}px ${mergedProps.shadowOffsetY}px ${mergedProps.shadow}px ${mergedProps.shadowColor}`,
 				textDecoration: `${mergedProps.decorationColor} ${mergedProps.decorationStyle} ${mergedProps.decorationLine}`,
 				textDecorationThickness: `${mergedProps.decorationW}px`,
-				// lineHeight:  ` ${mergedProps.fs }px`,
+				 lineHeight:  ` ${mergedProps.lineHeight }px`,
 				textTransform: mergedProps.transform,
+				paintOrder: "stroke fill"
 			}}
 			className={cn('m-0 cursor-pointer absolute ', className)}
 		>

@@ -30,10 +30,9 @@ import { inputPropsSchema } from './config';
 
 export type AnfaProps = z.infer<typeof inputPropsSchema>;
 
-export function AnfaMotion({ sText, img, color1 }: AnfaProps) {
+export function AnfaMotion({ img, color1, sText2, mText }: AnfaProps) {
 	const frame = useCurrentFrame();
 	const { width, height, durationInFrames } = useVideoConfig();
-
 	// console.log(image1, "prosp")
 	const animation = interpolate(frame, [0, durationInFrames * 0.8], [-200, 100], {
 		extrapolateLeft: 'clamp',
@@ -53,15 +52,39 @@ export function AnfaMotion({ sText, img, color1 }: AnfaProps) {
 			}}
 			className=" items-center justify-center"
 		>
-			<Text_A
+			{/* <Text_A
 				props={{
 					text: sText?.text,
-					y: animation,
+					y: animation - 120,
 					width: width,
 					color: color1,
 					...sText
 				}}
+			/> */}
+			<Text_A
+				props={{
+					text: sText2?.text,
+					y: animation,
+					width: width,
+					color: color1,
+					...sText2
+				}}
 			/>
+			<Text_A
+				props={{
+					text: mText?.text ,
+					y: animation  -400,
+					lineHeight: mText?.fs! + 5,
+					shadow: 3,
+					shadowColor: 'black',
+					width: width * 0.8,
+					color: "white",
+					stroke: 2,
+					strokeColor:'black',
+					...mText
+				}}
+			/>
+			
 
 			 {/* <Video style={{width:'200px', height:'200px'}} src={vide as string}/>  */}
 		</AbsoluteFill>

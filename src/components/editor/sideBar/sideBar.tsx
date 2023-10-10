@@ -4,15 +4,16 @@
 
 // import Logo from '../../../../public/assets/logo.png'
 
-import {  useReducer, useState } from "react"
+// import {  useReducer, useState } from "react"
 
-import { MediaDisplay } from "../sidePanel/MediaDisplay"
+// import { MediaDisplay } from "../sidePanel/MediaDisplay"
 
-import MusicDisplay from "../sidePanel/MusicDisplay"
-import { ColorDisplay } from "../sidePanel/ColorDisplay"
-// import { MainDataActionTypes, MainDataObject } from "@/utils/remotion/inputPropsReducer"
-import { TextDisplay } from "../sidePanel/TextDisplay"
-import clsx from "clsx"
+// import MusicDisplay from "../sidePanel/MusicDisplay"
+// import { ColorDisplay } from "../sidePanel/ColorDisplay"
+// // import { MainDataActionTypes, MainDataObject } from "@/utils/remotion/inputPropsReducer"
+// import { TextDisplay } from "../sidePanel/TextDisplay"
+// import clsx from "clsx"
+// import { inputPropsReducer } from "../../utils/inputPropsReducer"
 
 
 type State = {
@@ -25,18 +26,9 @@ type Action = {
     payload: number; // Assuming payload is a number representing the index
 };
 
-const reducer = (state: State, action: Action): State => {
-    switch (action.type) {
-        case 'SELECT_ITEM':
-            return { ...state, selectedItem: action.payload };
-        default:
-            return state;
-    }
-};
+
 // arbitrary number outside of the scope
-const initialState = {
-    selectedItem: 100,
-};
+
 
 // interface SidebarProps  {
 //  templateData : TemplateProps
@@ -47,26 +39,30 @@ const initialState = {
 // }
 
 
-export const Sidebar = (
+// export const SidebarOld = (
     // { templateData, pexelImages, aiImages, propsData, propsAction }
-) => {
-    const [open, setOpen] = useState(false)
-    const [state, dispatch] = useReducer(reducer, initialState);
+//     data:any
+// ) => {
+    
+
+
+    // const [open, setOpen] = useState(false)
+    // const [state, dispatch] = useReducer(inputPropsReducer, data);
 
     // const musicPrompt = templateData.texts.output.musicPrompt
 
-    const handleItemClick = (index: number) => {
-        if (index === state.selectedItem) { setOpen(!open) }
-        else if (index === 100) {
-            dispatch({ type: 'SELECT_ITEM', payload: index });
-            setOpen(!open)
-        }
-        else {
-            dispatch({ type: 'SELECT_ITEM', payload: index });
-            setOpen(true)
+    // const handleItemClick = (index: number) => {
+    //     if (index === state.selectedItem) { setOpen(!open) }
+    //     else if (index === 100) {
+    //         dispatch({ type: 'SELECT_ITEM', payload: index });
+    //         setOpen(!open)
+    //     }
+    //     else {
+    //         dispatch({ type: 'SELECT_ITEM', payload: index });
+    //         setOpen(true)
 
-        }
-    };
+    //     }
+    // };
 
     // const size = "Square"
 
@@ -92,23 +88,24 @@ export const Sidebar = (
 
 
 
-    const panelDisplay: React.ReactNode[] = [
-        <TextDisplay />,
-        <ColorDisplay />,
-        <MediaDisplay />,
-        <MusicDisplay />,
+    // const panelDisplay: React.ReactNode[] = [
+    //     <TextDisplay />,
+    //     <ColorDisplay />,
+    //     <MediaDisplay />,
+    //     <MusicDisplay />,
 
-    ]
+    // ]
 
-    return (
-
-        <>
+    //   return (
+    //     <div></div>)
+{/* 
+       <>
             <div className='w-full h-24 z-40  sm:left-0 sm:shadow-md  sm:initial bottom-0 sm:min-w-min overflow-y-visible sm:max-w-[80px] bg-white sm:h-full flex items-center sm:grid sm:grid-flow-row-dense'>
                 <div className="hidden sm:inline justify-self-center  ">
-                    {/* <image src={Logo} /> */}
+                    <image src={Logo} />
 
                 </div>
-                {/* {editorSidebarData.map((arg: any, i) => (
+               {editorSidebarData.map((arg: any, i) => (
 
                     <Card key={i}
                         onClick={() => handleItemClick(i)}
@@ -125,15 +122,15 @@ export const Sidebar = (
                             <div className='text-lg sm:text-xl md:text-xl font-medium'>{arg.title}</div>
                         </CardHeader>
                     </Card>
-                ))} */}
-                {/* <div className='hidden sm:inline w-full h-full bottom-0 bg-yellow-300'>
+                ))} 
+            <div className='hidden sm:inline w-full h-full bottom-0 bg-yellow-300'>
                     staged
-                </div> */}
+                </div>
             </div>
+*/}
 
 
-
-
+{/* 
             <div className={clsx(" bottom-0 h-0 sm:h-full flex justify-center sm:justify-end items-center relative bg-white",
                 { "w-full sm:w-1/2": open, "h-[700px]": open },
                 { "w-full sm:w-8/12": state.selectedItem === 1 && open },
@@ -149,12 +146,12 @@ export const Sidebar = (
                 <div key={state.selectedItem} onClick={() => handleItemClick(100)}
                     className={clsx("sm:-right-8 -top-8 sm:top-auto cursor-pointer z-0 bg-white sm:w-10 w-32 flex items-center justify-center sm:h-40 h-10 group absolute rounded-t-2xl sm:rounded-t-0 sm:rounded-r-2xl",
                         { "hidden": !open })}>
-                    {/* <ChevronRight className="-rotate-90 sm:rotate-0  group-hover:scale-110 group-hover:text-red-400" /> */}
-                </div>
+                    <ChevronRight className="-rotate-90 sm:rotate-0  group-hover:scale-110 group-hover:text-red-400" />
+                </div> 
 
 
 
             </div>
-        </>
-    )
-}
+        </>*/}
+    
+// }

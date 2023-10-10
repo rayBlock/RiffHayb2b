@@ -23,7 +23,7 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 	console.log(llmSchemaData, 'llm');
 	const intDuration = parseInt(duration)
 	const prepInputs = HayMaker({ duration: intDuration });
-
+		
 	// const leonardoImages = await getLeonardoAIImages({
 	// 	query: llmSchemaData?.output.imgPrompts,
 	// 	size: 'Portrait'
@@ -122,6 +122,8 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 
 	// let pexelVids: string[] = [];
 	function randoNumber(): number {return Math.floor(Math.random() * 4);}
+
+
 
 	prepInputs.mergedInputProps.forEach((item: any, index: any) => {
 		const { name, minDurationFrames, maxDurationFrames }: any = item;
@@ -320,6 +322,7 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 		data: transformedData,
 		 images: images,
 		 text: llmSchemaData,
+		 inputs: prepInputs.inputProps
 	};
 	return inputProps
 }

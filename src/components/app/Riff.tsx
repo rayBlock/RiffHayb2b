@@ -13,6 +13,7 @@ import { RiffGarden } from '../../remotion/RiffGarden';
 import { useRef } from 'react';
 // import type { PromptPrivacyLevel } from '../../lib/trpc/routers/prompts';
 import { RifferTimeLine } from '../editor/RifferTimeline';
+import { SideBar } from '../editor/SideBar';
 
 export function Riff() {
 	// const navigate = useNavigate();
@@ -49,16 +50,17 @@ export function Riff() {
 		return errorPage;
 	}
 
-	const data = riffQuery.data;
+	const { data } = riffQuery;
+	// console.log(data, "all data ?")
 	const playerRef = useRef<PlayerRef>(null);
 
 
 	return (
 
-		<main className='flex flex-col justify-center items-center'>
+		<main className='flex flex-col'>
 
-			<div className='flex justify-center  gap-4'>
-				{/* <RiffEditor data={data} ref={playerRef} /> */}
+					<SideBar data={data} />
+			<div className='flex justify-center gap-4 pt-4'>
 				<Player
 					ref={playerRef}
 					component={RiffGarden}
@@ -70,12 +72,13 @@ export function Riff() {
 					style={{ width: '280px' }}
 					autoPlay
 					loop
+					controls
 				/>
 
 				{/* <div className='w-1/2 text-right'>{JSON.stringify(data?.riff.inputs)}</div> */}
 			</div>
-			<div className=''>
-				<RifferTimeLine playerRef={playerRef} />
+			<div>
+				<RifferTimeLine playerRef={playerRef} inputs={data?.riff.inputs as any} />
 			</div>
 		</main>
 

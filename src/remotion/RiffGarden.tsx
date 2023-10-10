@@ -71,7 +71,7 @@ export function RiffGarden(inputProps: riffInput) {
 	// aa   the 2 arrays stitched together ...
 	// the correct props
 	//  correct durationInfFrames
-	// console.log(inputProps, "all the props")
+	 console.log(inputProps, "garden props")
 	return (
 		<TransitionSeries>
 			{inputProps.data.map((item, i) =>
