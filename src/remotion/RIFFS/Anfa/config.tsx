@@ -15,7 +15,7 @@ const maxDurationFrames = durationInFrames + 15;
 export const inputPropsSchema = z
 	.object({
 		name: z.string().default('Anfa'),
-		sText: Text.extend({ fs: z.number().default(44) }).describe('short'),
+		// sText: Text.extend({ fs: z.number().default(44) }).describe('short'),
 		sText2: Text.extend({ fs: z.number().default(55) }).describe('short'),
 
 		mText: Text.extend({ fs: z.number().default(66) }).describe('mid'),

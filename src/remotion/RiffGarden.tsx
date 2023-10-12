@@ -31,7 +31,7 @@ const TransitionDecider = (props: any, i: number, inputProps: any): any => {
 		<Slide {...props} {...inputProps} />,
 		<Dissolve {...props} />,
 		<FadeThroughColor {...props} {...inputProps} />,
-		<Pan {...props } {...inputProps} />,
+		<Pan {...props} {...inputProps} />,
 		<SlidingDoors {...props} {...inputProps} />,
 		<LinearWipe  {...props} {...inputProps} />,
 		<CircularWipe {...props} {...inputProps} />,
@@ -63,7 +63,7 @@ export type riffInput = {
 		duration: number;
 		comp: number;
 		props?: any;
-	}[];
+	}[]
 };
 
 export function RiffGarden(inputProps: riffInput) {
@@ -71,7 +71,7 @@ export function RiffGarden(inputProps: riffInput) {
 	// aa   the 2 arrays stitched together ...
 	// the correct props
 	//  correct durationInfFrames
-	 console.log(inputProps, "garden props")
+	// console.log(inputProps, "garden props")
 	return (
 		<TransitionSeries>
 			{inputProps.data.map((item, i) =>
@@ -88,23 +88,6 @@ export function RiffGarden(inputProps: riffInput) {
 					/>
 				)
 			)}
-
-			{/* { () => sequenceData.map((item, index) => (
-
-            
-index % transitionData.length === 0 ? (
-  <Sequence item={item} {...props}  />
-) : (
-  <Transition
-    transitionData={transitionData}
-    transitionComponents={TransitionComponents}
-    index={index}
-    enterElement={<div>some</div>}
-    exitElement={<div>go</div>}
-    {...props}
-  />)
-)}
-     */}
 		</TransitionSeries>
 	);
 }

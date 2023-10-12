@@ -46,6 +46,7 @@ export function AnfaMotion({ img, color1, sText2, mText }: AnfaProps) {
 				backgroundImage: `url(${img})`,
 				backgroundSize: `cover`,
 				backgroundRepeat: 'no-repeat',
+				backgroundPosition: 'center',
 				//  background: 'lime',
 				width: width,
 				height: height,

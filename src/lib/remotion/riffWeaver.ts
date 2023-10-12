@@ -1,10 +1,12 @@
-import { HayMaker } from '../../remotion/utils/Hay/HayMaker';
+
+import { hayMaker } from '../../remotion/utils/Hay/hayMaker';
 import type { FrameSchema } from '../../types/calculateFrames';
 import getAiImages from '../llm/getStableDiffusionImages';
 import getTexts from '../llm/llmTexts';
 // import { pexelClient } from '../pexels';
 import { calculateFrames } from './calcFrames';
 import { getRandomPastelColorWithVariations } from './getRandomColor';
+import { nanoid } from 'nanoid';
 
 type weaverProps = {
 	prompt: string;
@@ -13,31 +15,29 @@ type weaverProps = {
 };
 
 export async function riffWeaver({ prompt, duration, orientation }: weaverProps) {
-
 	const transformedData: any = [];
 
 	// const client = pexelClient;
-	const llmSchemaData = await getTexts(
-		prompt
-	);
+	const llmSchemaData = await getTexts(prompt);
 	console.log(llmSchemaData, 'llm');
-	const intDuration = parseInt(duration)
-	const prepInputs = HayMaker({ duration: intDuration });
-		
+	const intDuration = parseInt(duration);
+	const prepInputs = hayMaker({ duration: intDuration });
+
+	const amount = prepInputs.pickedRiffs?.length;
 	// const leonardoImages = await getLeonardoAIImages({
 	// 	query: llmSchemaData?.output.imgPrompts,
 	// 	size: 'Portrait'
 	// })
-
+	console.log(amount);
 	const images: string[] | void = await getAiImages({
 		query: llmSchemaData?.output.imgPrompts,
 		size: orientation as any,
+		amount: amount as number,
 	});
 
 	//  const query: any = llmSchemaData?.output.videoPrompt;
 
 	// let pxlVids: any = [];
-
 
 	// pexelClient.videos
 	// 	.search({ query: "cats", per_page: 3 })
@@ -116,21 +116,19 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 	let imageIndex: number = 0;
 	// let videoIndex: number = 0;
 
-	const propertyNames = ['short', 'mid', ];
+	const propertyNames = ['short', 'mid'];
 	const otherPropsNames = ['images', 'colors'];
 	//  'videos'
 
 	// let pexelVids: string[] = [];
-	function randoNumber(): number {return Math.floor(Math.random() * 4);}
-
-
+	function randoNumber(): number {
+		return Math.floor(Math.random() * 4);
+	}
 
 	prepInputs.mergedInputProps.forEach((item: any, index: any) => {
-		const { name, minDurationFrames, maxDurationFrames }: any = item;
+		const { name, minDurationFrames, maxDurationFrames, uID }: any = item;
 
 		const keys: any = {};
-
-		debugger;
 
 		otherPropsNames.forEach((otherProps) => {
 			if (item[otherProps]) {
@@ -237,7 +235,7 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 							// case 'long':
 							// 	keys[keyName] = { text: llmSchemaData?.output.longS[longIndex] };
 							// 	longIndex++;
-							default :
+							default:
 								break;
 						}
 
@@ -259,6 +257,7 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 
 		transformedData.push({
 			name: name,
+			id: uID,
 			duration: frameCount[index].durationInFrames,
 			min: minDurationFrames,
 			max: maxDurationFrames, // Customize this based on your data structure
@@ -306,11 +305,12 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 				default:
 					break;
 			}
+			const nanoID = nanoid(4);
 			transformedData.push({
-
 				duration: 20,
-				//TODO
-				//  duration: durationsArray[propsIndex]!.duration,
+				//TODO what ?.. hmmm ...
+
+				id: nanoID,
 				comp: prepInputs.traversePick![index],
 				props: { ...transitProps },
 			});
@@ -320,9 +320,12 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 
 	const inputProps = {
 		data: transformedData,
-		 images: images,
-		 text: llmSchemaData,
-		 inputs: prepInputs.inputProps
+		images: images,
+		text: llmSchemaData,
+		inputs: prepInputs.inputProps,
+		duration: duration,
+		prompt: prompt,
+		orientation: orientation,
 	};
-	return inputProps
+	return inputProps;
 }

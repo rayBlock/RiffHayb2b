@@ -33,5 +33,4 @@ function clamp(value: number, min: number, max: number): number {
 	return Math.min(Math.max(value, min), max);
 }
 
-const randomPastelColorWithVariations: string = getRandomPastelColorWithVariations();
-console.log('Random pastel color with variations (HSL format):', randomPastelColorWithVariations);
+

@@ -6,8 +6,8 @@ import { AnfaRiff } from './RIFFS/Anfa/config';
 export const riffsArray: CompConfig<any>[] = [
 	AnfaRiff,
 	AnfaRiff,
-	AnfaRiff,
-
+	AnfaRiff,AnfaRiff,AnfaRiff,AnfaRiff,AnfaRiff,AnfaRiff,AnfaRiff,AnfaRiff,
+	AnfaRiff,AnfaRiff,AnfaRiff,AnfaRiff,AnfaRiff,AnfaRiff,AnfaRiff,AnfaRiff,
 	AnfaRiff,
 
 

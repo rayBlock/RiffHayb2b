@@ -10,10 +10,13 @@ import { usePromptErrorPage } from './usePromptErrorPage';
 import { Player, type PlayerRef } from '@remotion/player';
 import { RiffGarden } from '../../remotion/RiffGarden';
 
-import { useRef } from 'react';
+import { useReducer, useRef, type Dispatch } from 'react';
 // import type { PromptPrivacyLevel } from '../../lib/trpc/routers/prompts';
 import { RifferTimeLine } from '../editor/RifferTimeline';
-import { SideBar } from '../editor/SideBar';
+import { SideBar, menu } from '../editor/SideBar';
+
+import { PlayButton } from '../editor/PlayButton';
+import { propsReducer, type MainDataObject,  type MainDataActionTypes } from '../utils/propsReducer';
 
 export function Riff() {
 	// const navigate = useNavigate();
@@ -50,35 +53,69 @@ export function Riff() {
 		return errorPage;
 	}
 
-	const { data } = riffQuery;
-	// console.log(data, "all data ?")
+	const { data: riffQueryData } = riffQuery;
+
 	const playerRef = useRef<PlayerRef>(null);
 
+	// TODO TYPE... 
+	const { inputs }: any = riffQueryData?.riff
+	console.log(inputs, "all the inputs in Riff")
 
+	const { data, duration:initialDuration, inputs:propsInit,orientation  } = inputs;
+	// const data = inputs.data;
+	console.log(data, "data ?")
+	const duration = parseInt(initialDuration);
+	const initialReducerData = {data, propsInit, menu, duration, orientation}
+
+	const [reduceState, reduceInputs]: [MainDataObject, Dispatch<MainDataActionTypes>] = useReducer(propsReducer, initialReducerData as any);
+	// console.log(reduceState, "red state")
+
+	const playerDuration = 30 * duration
+	const size = inputs.orientation
+
+	// TODO when width and height for user 
+	let dimWidth, dimHeight;
+
+	if (size === 'Square') {
+		dimWidth = dimHeight = 720; 
+	} else if (size === 'Portrait') {
+		dimWidth = 720; 
+		dimHeight = 1280; 
+	} else if (size === 'Landscape') {
+		dimWidth = 1280; 
+		dimHeight = 720; 
+	} else {
+
+		dimWidth = dimHeight = 640; 
+	}
+
+	const playerStyle = size === "Portrait" ? '220px' : size === "Landscape " ? '620px' : '420px'
 	return (
 
-		<main className='flex flex-col'>
+		<main className='flex flex-col relative h-[100dvh]'>
+			<img width={68} className='pt-2 pl-2 absolute' src="https://riff.52396b11c76ed6f3a85d0aef5888a944.r2.cloudflarestorage.com/imgs/1a55dfbc-4237-4e02-98b2-08c7f9b15c4c.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=6a93e0908aad5ec07b753c9a098c76ea%2F20231011%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20231011T121048Z&X-Amz-Expires=404800&X-Amz-Signature=0b1da681c6873e0f6b1b30257e4cf2613e31b31c7e81bb6aa345dbfcaa456422&X-Amz-SignedHeaders=host&x-id=GetObject" />
 
-					<SideBar data={data} />
+			<SideBar propsData={reduceState} propsAction={reduceInputs} />
 			<div className='flex justify-center gap-4 pt-4'>
 				<Player
 					ref={playerRef}
 					component={RiffGarden}
-					inputProps={data?.riff.inputs as any}
-					durationInFrames={300}
+					inputProps={reduceState as any}
+					durationInFrames={playerDuration}
 					fps={30}
-					compositionHeight={1280}
-					compositionWidth={720}
-					style={{ width: '280px' }}
+					compositionHeight={dimHeight}
+					compositionWidth={dimWidth}
+					style={{ width: playerStyle }}
 					autoPlay
 					loop
-					controls
+				// controls
 				/>
 
 				{/* <div className='w-1/2 text-right'>{JSON.stringify(data?.riff.inputs)}</div> */}
 			</div>
-			<div>
-				<RifferTimeLine playerRef={playerRef} inputs={data?.riff.inputs as any} />
+			<PlayButton playerRef={playerRef} turnPlay={""} playing={true} />
+			<div className='flex justify-center items-center'>
+				<RifferTimeLine totalFrames={playerDuration} playerRef={playerRef} inputs={inputs as any} />
 			</div>
 		</main>
 

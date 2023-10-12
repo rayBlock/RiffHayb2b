@@ -162,7 +162,6 @@ export const remotionRouter = createTRPCRouter({
 				const description = input.description || '';
 				// const tags = (input.tags || []).map((x) => x.trim()).filter((x) => x.length > 0);
 				const uRiff_Id = nanoid();
-				console.log(inputs.data[1], "1",inputs.data[3], "2")
 				await db.insert(riffs).values({
 					riffId: uRiff_Id,
 					inputs:inputs,

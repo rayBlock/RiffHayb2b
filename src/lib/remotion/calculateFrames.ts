@@ -223,7 +223,6 @@ export function calcFramesOld({
 			return addFramesToRiff(riffProps, remain);
 
 		case durationDifference === 0:
-			console.log('overallDuration is equal to mainDuration');
 			return props;
 
 		case durationDifference < 0:

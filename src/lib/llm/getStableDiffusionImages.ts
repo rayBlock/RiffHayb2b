@@ -18,43 +18,36 @@ const S3 = new S3Client({
 });
 
 type props = {
-	query: string;
+	query: string[];
 	size: 'Square' | 'Landscape' | 'Portrait';
+	amount: number;
 };
 
-export default async function getAiImages({ query, size }: props) {
+export default async function getAiImages({ query, size, amount }: props) {
 	// const engineId = "stable-diffusion-xl-beta-v2-2-2";
 	const engine = 'stable-diffusion-xl-1024-v1-0';
 	const apiHost = 'https://api.stability.ai';
 	const apiKey = process.env.STABILITY_API_KEY;
 
 	if (!apiKey) throw new Error('Missing Stability API key.');
-	console.log(query, "&&",size)
+
 	let dimWidth, dimHeight;
 
 	if (size === 'Square') {
-		dimWidth = dimHeight = 1024; // Set the width and height to 200px for square size
+		dimWidth = dimHeight = 1024; 
 	} else if (size === 'Portrait') {
-		dimWidth = 768; // Set width to 150px for portrait size
-		dimHeight = 1344; // Set height to 200px for portrait size
+		dimWidth = 768; 
+		dimHeight = 1344; 
 	} else if (size === 'Landscape') {
-		dimWidth = 1344; // Set width to 300px for landscape size
-		dimHeight = 768; // Set height to 200px for landscape size
+		dimWidth = 1344; 
+		dimHeight = 768; 
 	} else {
-		// Handle any other size or invalid value here
 		dimWidth = dimHeight = 200; // Set default width and height to 200px
 	}
 
-	// const url = `${apiHost}/v1/engines/list`
-
-	// const get = await fetch(url, {
-	//   method: 'GET',
-	//   headers: {
-	//     Authorization: `Bearer ${apiKey}`,
-	//   },
-	// })
-
-	// const payload = (await get.json())
+	const inputArray = query.map((description:string) => {
+		return { text: description };
+	});
 
 	const response = await fetch(`${apiHost}/v1/generation/${engine}/text-to-image`, {
 		method: 'POST',
@@ -65,13 +58,7 @@ export default async function getAiImages({ query, size }: props) {
 		},
 		body: JSON.stringify({
 			text_prompts: [
-				{
-					text:
-						// Photography, best quality
-						`
-              ${query}` ||
-						'A photograph of a family eating dinner at noon somwhere around the world, high resolution photography',
-				},
+				...inputArray
 			],
 
 			// TODO: have to find out what aspect ratios to build depending on format input from User
@@ -84,8 +71,7 @@ export default async function getAiImages({ query, size }: props) {
 			// 1024x1024, 1152x896, 1216x832, 1344x768, 1536x640, 640x1536, 768x1344, 832x1216, 896x1152,
 			height: dimHeight,
 			width: dimWidth,
-			// TODO
-			samples: 3,
+			samples: amount,
 			steps: 16,
 		}),
 	});
@@ -103,7 +89,6 @@ export default async function getAiImages({ query, size }: props) {
 	}
 
 	const responseJSON = (await response.json()) as GenerationResponse;
-
 
 	async function uploadFilesToS3(bucketName: string, response: any) {
 		const uploadedUrls = []; // Array to store the uploaded file URLs
@@ -151,52 +136,3 @@ export default async function getAiImages({ query, size }: props) {
 
 	return urlResponse;
 }
-
-// async function uploadFileAndGetDownloadUrl(fileObj: any) {
-//   try {
-//
-//     const fileName = `ai-images/${uniqueID}.jpg`;
-//     const buffer = Buffer.from(fileObj.base64, "base64");
-
-//     // const file = aiBucket.file(fileName);
-
-//     // await file.save(buffer, {
-//     //   metadata: {
-//     //     contentType: "image/jpeg",
-//     //     // Replace with the appropriate content type for your file
-//     //   },
-//     // });
-
-//     // const downloadUrl = await getDownloadURL(file); // Use the "file" reference directly
-
-//    // return downloadUrl; // Return the download URL
-//   } catch (error) {
-//     console.error("Error uploading file:", error);
-//     throw error;
-//   }
-// }
-
-// Function to upload multiple files and get their download URLs
-//   async function uploadFilesAndGetDownloadUrls(): Promise<string[]> {
-//     try {
-//       const uploadPromises = responseJSON.artifacts.map(
-//         uploadFileAndGetDownloadUrl
-//       );
-//       return await Promise.all(uploadPromises);
-//     } catch (error) {
-//       console.error("Error uploading files:", error);
-//       throw error;
-//     }
-//   }
-
-//   // Usage example:
-//   const URLs = await uploadFilesAndGetDownloadUrls()
-//     .then((downloadUrls) => {
-//       return downloadUrls;
-//     })
-//     .catch((error) => {
-//       console.error("Error:", error);
-//     });
-
-//   console.log("Download URLs for uploaded files:", URLs);
-//   return URLs;

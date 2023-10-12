@@ -32,14 +32,14 @@ interface AddShortItemAction {
 }
 
 // Define the union type for all possible action types
-export type MainDataActionTypes =
+type MainDataActionTypes =
   | AddColorAction
   | AddLongItemAction
   | AddMidItemAction
   | AddShortItemAction;
 
 // Define the MainDataObject interface
-export interface MainDataObject {
+interface MainDataObject {
   colors: InputProps[];
   images: any[];
 
