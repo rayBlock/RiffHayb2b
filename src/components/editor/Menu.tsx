@@ -1,7 +1,14 @@
 export type menu = {
-    colors: boolean,
-    images: boolean,
-    videos: boolean,
-    texts: boolean,
-    position: any[] | null
-}
+    colors: boolean;
+    colorsX: number;
+    colorsY: number;
+    texts: boolean;
+    textsX: number;
+    textsY:number;
+    images: boolean;
+    imagesY:number;
+    imagesX:number;
+    videos: boolean;
+    videosX:number;
+    videosY:number;
+};

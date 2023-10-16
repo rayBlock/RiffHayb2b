@@ -21,6 +21,7 @@ import { ColorsEditor } from '../editor/ColorsEditor';
 import type { menu } from '../editor/Menu';
 import { useCurrentPlayerFrame } from '../utils/use-current-frame';
 import { useCurrentRiff } from '../utils/use-current-riff';
+import { positionReducer, type PositionDataObject, type PositionDataActionTypes } from '../utils/positionReducer';
 
 export function Riff() {
 	// const navigate = useNavigate();
@@ -75,7 +76,6 @@ export function Riff() {
 		id: entry.id,
 		duration: entry.duration,
 	}));
-	console.log(extractedData, "extracted");
 
 	// Replace with your data
 
@@ -99,30 +99,40 @@ export function Riff() {
 		}
 		return entry;
 	});
-	// Filter out undefined items
 
-	console.log(adjustedData, "adj")
-	// The 'extractedData' array will now contain objects with 'id' and 'duration'
-	// console.log(extractedData, "data extracted");
 	const frame = useCurrentPlayerFrame(playerRef);
 
 	const riffsTime = useCurrentRiff(adjustedData, frame)
 
+
+	// TODO init x & y with correct numbrs depending on window size ?
 	const menu: menu = {
 		colors: false,
+		colorsX: 0,
+		colorsY: 0,
 		images: false,
+		imagesX: 0,
+		imagesY: 0,
 		videos: false,
+		videosX: 0,
+		videosY: 0,
 		texts: false,
-		position: extractedData
+		textsX: 0,
+		textsY: 0,
+
 	}
 	const mainWindowRef = useRef<HTMLDivElement | null>(null);
 	// console.log(mainWindowRef.current?.clientWidth);
 
 	// console.log(data, "data ?")
 	const duration = parseInt(initialDuration);
-	const initialReducerData = { data, propsInit, menu, duration, orientation }
+	const initialReducerData = { data, propsInit, duration, orientation }
+	const initialPositionData = {orientation ,menu}
 
-	const [reduceState, reduceInputs]: [MainDataObject, Dispatch<MainDataActionTypes>] = useReducer(propsReducer, initialReducerData as any);
+	const [redPropsState, redPropsActions]: [MainDataObject, Dispatch<MainDataActionTypes>] = useReducer(propsReducer, initialReducerData as any);
+
+	const [positionState, positionActions]: [PositionDataObject, Dispatch<PositionDataActionTypes>] = useReducer(positionReducer, initialPositionData);
+
 	// console.log(reduceState, "red state")
 
 	const playerDuration = 30 * duration
@@ -143,23 +153,24 @@ export function Riff() {
 
 		dimWidth = dimHeight = 640;
 	}
-	// console.log(size, "size")
 	const playerStyle = size === "Portrait" ? '220px' : size === "Landscape" ? '620px' : '420px';
-	// console.log(playerStyle)
-	const timeLineWidth = Math.round(mainWindowRef.current?.clientWidth! * 0.8)
+	const mainWindowWidth: number | undefined = mainWindowRef.current?.clientWidth
+	const timeLineWidth = mainWindowWidth && mainWindowWidth! < 420 ? Math.round(mainWindowWidth * 0.9) : Math.round(mainWindowWidth! * 0.8);
+	// console.log(timeLineWidth, "<-- width");
+
 	return (
 		// <Layout>
 
 		<main ref={mainWindowRef} className='flex flex-col h-screen relative'>
-			<img width={68} className='pt-2 pl-2 absolute' src="https://riff.52396b11c76ed6f3a85d0aef5888a944.r2.cloudflarestorage.com/imgs/1a55dfbc-4237-4e02-98b2-08c7f9b15c4c.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=6a93e0908aad5ec07b753c9a098c76ea%2F20231011%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20231011T121048Z&X-Amz-Expires=404800&X-Amz-Signature=0b1da681c6873e0f6b1b30257e4cf2613e31b31c7e81bb6aa345dbfcaa456422&X-Amz-SignedHeaders=host&x-id=GetObject" />
+			<img width={68} className='pt-2 hidden md:block pl-2 absolute' src="https://pub-7f331d131f5a4a8aad6b934de32e2296.r2.dev/imgs/00c3297c-ded0-4ba4-8d33-7ddb4bfd8e61.png" />
 
-			<SideBar propsData={reduceState} propsAction={reduceInputs} />
-			<ColorsEditor propsData={reduceState} propsAction={reduceInputs} />
-			<div className='flex justify-center gap-4 pt-4'>
+			<SideBar propsData={positionState} propsAction={positionActions} />
+			<ColorsEditor mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} positionData={positionState} positionAction={positionActions} />
+			<div className='flex justify-center gap-4 sm:pt-4'>
 				<Player
 					ref={playerRef}
 					component={RiffGarden}
-					inputProps={reduceState as any}
+					inputProps={redPropsState as any}
 					durationInFrames={playerDuration}
 					fps={30}
 					compositionHeight={dimHeight}

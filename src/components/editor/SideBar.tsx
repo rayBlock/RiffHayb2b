@@ -4,17 +4,18 @@
 import clsx from "clsx";
 
 import { ImageIcon, TextIcon, VideoIcon, ColorPalette } from "./Icons/PropMenuItems";
-import type { MainDataObject, MainDataActionTypes, UpdateItemAction, UpdateMenuAction, menuPropNames } from "../utils/propsReducer";
+import type { UpdateMenuAction, menuPropNames } from "../utils/propsReducer";
 import type { Dispatch } from "react";
+import type { PositionDataActionTypes, PositionDataObject } from "../utils/positionReducer";
 
 interface SidebarProps {
-    propsData: MainDataObject
-    propsAction: Dispatch<MainDataActionTypes>
+    propsData: PositionDataObject
+    propsAction: Dispatch<PositionDataActionTypes>
 }
 
 type MenuProps = {
     child: any
-    propsData: MainDataObject
+    propsData: PositionDataObject
     propsAction: Dispatch<UpdateMenuAction>
     menuArg: menuPropNames
 }
@@ -31,7 +32,7 @@ const PropMenuButton = ({ child, propsData, menuArg, propsAction }: MenuProps) =
         };
         propsAction(action);
     };
-
+    console.log(propsData, "sidebar prposdaa")
     const menuClass = propsData.menu[menuArg] ? 'bg-green-200 ' : '';
 
     return (
@@ -61,17 +62,17 @@ export const SideBar = ({ propsData, propsAction }: SidebarProps) => {
     const iconW = iconH
 
 
-    const updateItemProperty = (id: string, propName: string, value: any) => {
-        const action: UpdateItemAction = {
-            type: 'UPDATE_ITEM',
-            payload: {
-                id,
-                propName,
-                value,
-            },
-        };
-        propsAction(action);
-    };
+    // const updateItemProperty = (id: string, propName: string, value: any) => {
+    //     const action: UpdateItemAction = {
+    //         type: 'UPDATE_ITEM',
+    //         payload: {
+    //             id,
+    //             propName,
+    //             value,
+    //         },
+    //     };
+    //     propsAction(action);
+    // };
 
 
     return (
