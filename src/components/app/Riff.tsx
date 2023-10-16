@@ -22,6 +22,8 @@ import type { menu } from '../editor/Menu';
 import { useCurrentPlayerFrame } from '../utils/use-current-frame';
 import { useCurrentRiff } from '../utils/use-current-riff';
 import { positionReducer, type PositionDataObject, type PositionDataActionTypes } from '../utils/positionReducer';
+import { ImagesEditor } from '../editor/ImagesEditor';
+import { TextEditor } from '../editor/TextEditor';
 
 export function Riff() {
 	// const navigate = useNavigate();
@@ -66,7 +68,7 @@ export function Riff() {
 	const { inputs }: any = riffQueryData?.riff
 	// console.log(inputs, "all the inputs in Riff")
 
-	const { data, duration: initialDuration, inputs: propsInit, orientation } = inputs;
+	const { data, duration: initialDuration, inputs: propsDock, orientation } = inputs;
 	// const data = inputs.data;
 	interface DataItem {
 		id: string;
@@ -126,8 +128,8 @@ export function Riff() {
 
 	// console.log(data, "data ?")
 	const duration = parseInt(initialDuration);
-	const initialReducerData = { data, propsInit, duration, orientation }
-	const initialPositionData = {orientation ,menu}
+	const initialReducerData = { data, propsDock, duration, orientation }
+	const initialPositionData = { orientation, menu }
 
 	const [redPropsState, redPropsActions]: [MainDataObject, Dispatch<MainDataActionTypes>] = useReducer(propsReducer, initialReducerData as any);
 
@@ -164,8 +166,10 @@ export function Riff() {
 		<main ref={mainWindowRef} className='flex flex-col h-screen relative'>
 			<img width={68} className='pt-2 hidden md:block pl-2 absolute' src="https://pub-7f331d131f5a4a8aad6b934de32e2296.r2.dev/imgs/00c3297c-ded0-4ba4-8d33-7ddb4bfd8e61.png" />
 
-			<SideBar propsData={positionState} propsAction={positionActions} />
-			<ColorsEditor mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} positionData={positionState} positionAction={positionActions} />
+			<SideBar playerRef={playerRef} propsData={positionState} propsAction={positionActions} />
+			<ImagesEditor currentRiff={riffsTime} mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} positionData={positionState} positionAction={positionActions} />
+			<TextEditor currentRiff={riffsTime} mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} positionData={positionState} positionAction={positionActions} />
+			<ColorsEditor currentRiff={riffsTime} mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} positionData={positionState} positionAction={positionActions} />
 			<div className='flex justify-center gap-4 sm:pt-4'>
 				<Player
 					ref={playerRef}
@@ -183,7 +187,13 @@ export function Riff() {
 
 				{/* <div className='w-1/2 text-right'>{JSON.stringify(data?.riff.inputs)}</div> */}
 			</div>
-			<PlayButton playerRef={playerRef} turnPlay={""} playing={true} />
+			<PlayButton
+				yPosition={20}
+				scale="scale-125"
+				playerRef={playerRef}
+				hiddenProp="md:flex hidden"
+			//  playing={true}
+			/>
 			<div className='flex justify-center items-center'>
 				<RifferTimeLine tlWidth={timeLineWidth} mainWindow={mainWindowRef.current?.clientWidth} riffsTime={riffsTime} totalFrames={playerDuration} playerRef={playerRef} inputs={inputs as any} />
 			</div>

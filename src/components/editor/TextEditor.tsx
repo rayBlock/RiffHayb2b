@@ -23,7 +23,8 @@ interface ColorBarProps {
 
 
 
-export const ColorsEditor = ({ positionData, propsState, positionAction, propsActions, currentRiff, mainWindow }: ColorBarProps) => {
+
+export const TextEditor = ({ positionData, propsState, positionAction, propsActions, currentRiff, mainWindow }: ColorBarProps) => {
 
   console.log(currentRiff, "c Editor riff current")
 
@@ -43,13 +44,14 @@ export const ColorsEditor = ({ positionData, propsState, positionAction, propsAc
   // console.log(xInit);
 
 
-  const updatedColors = propsState.propsDock.colors.map((colorItem) => {
-    const value = getValueForIdAndPropName(propsState.data, colorItem.id, colorItem.propName);
-    return { ...colorItem, value };
+  const updatedTexts = propsState.propsDock.texts.all.map((textItem) => {
+    const value = getValueForIdAndPropName(propsState.data, textItem.id, textItem.propName);
+    return { ...textItem, value };
   });
 
 
   // const [offsetTrack, setOffsetTrack] = useState<offsetTrackType>({ x: xInit, y: yInit });
+  console.log(updatedTexts, "updatedTexts");
 
 
   useEffect(() => {
@@ -65,10 +67,10 @@ export const ColorsEditor = ({ positionData, propsState, positionAction, propsAc
         const action: UpdateItemPositionAction = {
           type: 'UPDATE_ITEM_POSITION',
           payload: {
-            nameX: 'colorsX',
-            valueX: positionData.menu.colorsX + offsetX,
-            nameY: 'colorsY',
-            valueY: positionData.menu.colorsY + offsetY
+            nameX: 'textsX',
+            valueX: positionData.menu.textsX + offsetX,
+            nameY: 'textsY',
+            valueY: positionData.menu.textsY + offsetY
           },
         };
         positionAction(action);
@@ -110,27 +112,20 @@ export const ColorsEditor = ({ positionData, propsState, positionAction, propsAc
     propsActions(action);
   };
 
-  const colorsShown = positionData.menu.colors ? 'block' : 'hidden'
+  const colorsShown = positionData.menu.texts ? 'block' : 'hidden'
 
   return (
     <div>
       <div
         ref={divRef}
-        style={{ transform: `translate3d(${positionData.menu.colorsX}px, ${positionData.menu.colorsY}px, 0px)` }}
-        className={clsx(colorsShown, "absolute border border-black bg-[#d3e0f6] p-4 rounded-lg cursor-pointer z-10 grid grid-cols-6 gap-2")}>
+        style={{ transform: `translate3d(${positionData.menu.textsX}px, ${positionData.menu.textsY}px, 0px)` }}
+        className={clsx(colorsShown, "absolute border border-black bg-[#d3e0f6] p-4 rounded-lg cursor-pointer z-10 grid  gap-2")}>
 
-        {updatedColors.map((colorItem, index) => (
-          <input
-            key={index} style={{ background: colorItem.value, width: '28px', height: '28px' }}
-            onChange={(e) => updateItemProperty(colorItem.id, colorItem.propName, e.target.value)}
-            className={clsx("rounded-full p-3 appearance-none transition-all hover:border-2 border-red ", colorItem.id === currentRiff.id ? `border-b-[6px] border-t-[6px] border-black` : "border-b-2 border-black")}
-            type="color"
+        {updatedTexts.map((textItem, index) => (console.log(textItem),
+          <div
+            className={clsx("z-0", textItem.id === currentRiff.id ? `shadow-[0px_1px_8px_3px_black]` : "")}
 
-          />
-
-
-
-        ))}
+          >{textItem.value.text}</div>))}
 
 
       </div>

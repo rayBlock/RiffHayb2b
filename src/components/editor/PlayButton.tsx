@@ -1,7 +1,8 @@
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 
 
-export const PlayButton = ({ playerRef }: any) => {
+export const PlayButton = ({ playerRef, yPosition, hiddenProp, scale }: any) => {
     const [playing, setStatePlaying] = useState<boolean>(true);
     const [spaceModeTime, setSpaceModeTime] = useState<any>(null);
 
@@ -31,7 +32,8 @@ export const PlayButton = ({ playerRef }: any) => {
     };
 
     return (
-        <div className="flex justify-center pt-8 items-center">
+        <div style={{ transform: `translateY(${yPosition}px)` }}
+            className={clsx(hiddenProp, "  justify-center items-center")}>
             <button
                 onClick={turn_play}
                 aria-label={playing ? 'Pause' : 'Play'}
@@ -39,7 +41,7 @@ export const PlayButton = ({ playerRef }: any) => {
             >
                 {playing ?
                     // Pause
-                    <div className="scale-125 ">
+                    <div className={clsx(scale, '')}>
 
                         < svg width="80" height="35" viewBox="0 0 28 42" xmlns="http://www.w3.org/2000/svg" >
                             <g transform="rotate(90, 23, 23.5) " >
@@ -51,8 +53,8 @@ export const PlayButton = ({ playerRef }: any) => {
                     </div >
                     // Play
                     :
-                    <div className="scale-125 f ">
-                        <svg width="80" height="37" viewBox="0 0 69 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div className={clsx(scale, '')}>
+                        <svg width="80" height="35" viewBox="0 0 69 37" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clipPath="url(#clip0_909_2078)">
                                 <path d="M45.3675 25.4375L54.8737 19.6562C55.3287 19.3787 55.5563 18.9933 55.5563 18.5C55.5563 18.0067 55.3287 17.6212 54.8737 17.3437L45.3675 11.5625C44.88 11.2542 44.3841 11.2307 43.8797 11.4922C43.3753 11.7537 43.1237 12.1625 43.125 12.7187L43.125 24.2812C43.125 24.8362 43.3772 25.2451 43.8816 25.5078C44.386 25.7705 44.8813 25.7471 45.3675 25.4375ZM48 37C45.3025 37 42.7675 36.5141 40.395 35.5422C38.0225 34.5703 35.9588 33.2525 34.2038 31.5887C32.4488 29.9238 31.0597 27.9658 30.0366 25.715C29.0135 23.4642 28.5013 21.0592 28.5 18.5C28.5 15.9408 29.0122 13.5358 30.0366 11.285C31.061 9.03417 32.4501 7.07625 34.2038 5.41125C35.9588 3.74625 38.0225 2.42843 40.395 1.4578C42.7675 0.487167 45.3025 0.00123333 48 0C50.6975 0 53.2325 0.485933 55.605 1.4578C57.9775 2.42967 60.0413 3.74748 61.7963 5.41125C63.5513 7.07625 64.9409 9.03417 65.9653 11.285C66.9897 13.5358 67.5013 15.9408 67.5 18.5C67.5 21.0592 66.9878 23.4642 65.9634 25.715C64.939 27.9658 63.55 29.9238 61.7963 31.5887C60.0413 33.2537 57.9775 34.5722 55.605 35.544C53.2325 36.5159 50.6975 37.0012 48 37Z"
                                     fill="black" />

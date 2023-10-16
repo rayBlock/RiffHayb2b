@@ -12,7 +12,7 @@ export interface UpdateItemPositionAction {
 		valueY: number; // You may want to adjust the type based on the nature of data
 	};
 }
-export type menuPropNames = 'colors' | 'images' | 'videos' | 'texts';
+export type menuPropNames = 'colors' | 'images' | 'videos' | 'texts' ;
 
 export interface UpdateMenuAction {
 	type: typeof UPDATE_MENU;

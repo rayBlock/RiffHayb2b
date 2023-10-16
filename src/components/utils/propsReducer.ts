@@ -15,7 +15,7 @@ export interface UpdateItemAction {
 		value: any; // You may want to adjust the type based on the nature of data
 	};
 }
-export type  menuPropNames = 'colors' | 'images' | 'videos' | 'texts';
+export type  menuPropNames = 'colors' | 'images' | 'videos' | 'texts' | "none";
 
 export interface UpdateMenuAction {
 	type: typeof UPDATE_MENU;
@@ -38,7 +38,7 @@ export interface MainDataObject {
 	}>;
 	duration: string;
 	// images: string[];
-	inputs: {
+	propsDock: {
 		colors: Array<{ propName: string; id: string }>;
 		images: Array<{ propName: string; id: string }>;
 		texts: {
