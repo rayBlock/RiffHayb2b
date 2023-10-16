@@ -27,6 +27,8 @@ import { SlidingDoors } from './utils/remotion-flow/traverse/SlidingDoors';
 // };
 
 const TransitionDecider = (props: any, i: number, inputProps: any): any => {
+
+	
 	const transitionArray = [
 		<Slide {...props} {...inputProps} />,
 		<Dissolve {...props} />,
@@ -71,10 +73,13 @@ export function RiffGarden(inputProps: riffInput) {
 	// aa   the 2 arrays stitched together ...
 	// the correct props
 	//  correct durationInfFrames
-	// console.log(inputProps, "garden props")
+	//  console.log(inputProps, "garden props")
 	return (
 		<TransitionSeries>
 			{inputProps.data.map((item, i) =>
+			(
+				// console.log(item, "item in garden"),
+			// console.log(item, "itme in map in garden.."),
 				i % 2 === 0 ? (
 					<TransitionSeries.Sequence key={i} durationInFrames={item.duration}>
 						{SequenceDecider(item.props, item.comp)}
@@ -86,7 +91,7 @@ export function RiffGarden(inputProps: riffInput) {
 						durationInFrames={item.duration}
 						transitionComponent={(s) => TransitionDecider(s, item.comp, item.props)}
 					/>
-				)
+				))
 			)}
 		</TransitionSeries>
 	);

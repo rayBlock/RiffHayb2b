@@ -34,11 +34,18 @@ export function AnfaMotion({ img, color1, sText2, mText }: AnfaProps) {
 	const frame = useCurrentFrame();
 	const { width, height, durationInFrames } = useVideoConfig();
 	// console.log(image1, "prosp")
-	const animation = interpolate(frame, [0, durationInFrames * 0.8], [-200, 100], {
+	const animation = interpolate(frame, [0, durationInFrames], [-100, 6750], {
 		extrapolateLeft: 'clamp',
 		extrapolateRight: 'clamp',
 		easing: Easing.ease,
 	});
+
+	
+
+	const colorG = frame === 0 ? "red" : 
+	frame === 1 ? "blue" : 
+	frame === 2 ?  "orange" : 
+	frame === 10 ?  "orange" : color1
 
 	return (
 		<AbsoluteFill
@@ -50,6 +57,7 @@ export function AnfaMotion({ img, color1, sText2, mText }: AnfaProps) {
 				//  background: 'lime',
 				width: width,
 				height: height,
+				overflow: 'hidden'
 			}}
 			className=" items-center justify-center"
 		>
@@ -65,21 +73,21 @@ export function AnfaMotion({ img, color1, sText2, mText }: AnfaProps) {
 			<Text_A
 				props={{
 					text: sText2?.text,
-					y: animation,
+					y: animation + 100,
 					width: width,
-					color: color1,
+					color: colorG,
 					...sText2
 				}}
 			/>
 			<Text_A
 				props={{
 					text: mText?.text ,
-					y: animation  -400,
+					y: animation  -200,
 					lineHeight: mText?.fs! + 5,
 					shadow: 3,
 					shadowColor: 'black',
 					width: width * 0.8,
-					color: "white",
+					color: colorG,
 					stroke: 2,
 					strokeColor:'black',
 					...mText

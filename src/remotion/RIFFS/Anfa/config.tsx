@@ -19,7 +19,7 @@ export const inputPropsSchema = z
 		sText2: Text.extend({ fs: z.number().default(55) }).describe('short'),
 
 		mText: Text.extend({ fs: z.number().default(66) }).describe('mid'),
-		color1: Color,
+		color1: Color.default("green"),
 		// color2: Color.default('red'),
 		color3: Color.default('lime'),
 

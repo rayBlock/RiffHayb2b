@@ -13,10 +13,14 @@ import { RiffGarden } from '../../remotion/RiffGarden';
 import { useReducer, useRef, type Dispatch } from 'react';
 // import type { PromptPrivacyLevel } from '../../lib/trpc/routers/prompts';
 import { RifferTimeLine } from '../editor/RifferTimeline';
-import { SideBar, menu } from '../editor/SideBar';
+import { SideBar } from '../editor/SideBar';
 
 import { PlayButton } from '../editor/PlayButton';
-import { propsReducer, type MainDataObject,  type MainDataActionTypes } from '../utils/propsReducer';
+import { propsReducer, type MainDataObject, type MainDataActionTypes } from '../utils/propsReducer';
+import { ColorsEditor } from '../editor/ColorsEditor';
+import type { menu } from '../editor/Menu';
+import { useCurrentPlayerFrame } from '../utils/use-current-frame';
+import { useCurrentRiff } from '../utils/use-current-riff';
 
 export function Riff() {
 	// const navigate = useNavigate();
@@ -59,13 +63,64 @@ export function Riff() {
 
 	// TODO TYPE... 
 	const { inputs }: any = riffQueryData?.riff
-	console.log(inputs, "all the inputs in Riff")
+	// console.log(inputs, "all the inputs in Riff")
 
-	const { data, duration:initialDuration, inputs:propsInit,orientation  } = inputs;
+	const { data, duration: initialDuration, inputs: propsInit, orientation } = inputs;
 	// const data = inputs.data;
-	console.log(data, "data ?")
+	interface DataItem {
+		id: string;
+		duration: number;
+	}
+	const extractedData: DataItem[] = data.map((entry: any) => ({
+		id: entry.id,
+		duration: entry.duration,
+	}));
+	console.log(extractedData, "extracted");
+
+	// Replace with your data
+
+
+	// const adjustedData: DataItem[] = extractedData.map((entry: DataItem, index: number, array: DataItem[]) => {
+	const adjustedData: DataItem[] = extractedData.map((entry: DataItem, index: number, array: DataItem[]) => {
+		if (index % 2 === 0) {
+			if (index === 0 && array[1]) {
+				// For the first item, subtract the duration of the second item
+				return { ...entry, duration: entry.duration - array[1].duration! };
+			} else if (index === array.length - 1 && array[index - 1]) {
+				// For the last item, subtract the duration of the item before it
+				return { ...entry, duration: entry.duration - array[index - 1]!.duration! };
+			} else if (array[index - 1] && array[index + 1]) {
+				// For other items, subtract the duration from the item before and after
+				return {
+					...entry,
+					duration: entry.duration - array[index - 1]!.duration - array[index + 1]!.duration,
+				};
+			}
+		}
+		return entry;
+	});
+	// Filter out undefined items
+
+	console.log(adjustedData, "adj")
+	// The 'extractedData' array will now contain objects with 'id' and 'duration'
+	// console.log(extractedData, "data extracted");
+	const frame = useCurrentPlayerFrame(playerRef);
+
+	const riffsTime = useCurrentRiff(adjustedData, frame)
+
+	const menu: menu = {
+		colors: false,
+		images: false,
+		videos: false,
+		texts: false,
+		position: extractedData
+	}
+	const mainWindowRef = useRef<HTMLDivElement | null>(null);
+	// console.log(mainWindowRef.current?.clientWidth);
+
+	// console.log(data, "data ?")
 	const duration = parseInt(initialDuration);
-	const initialReducerData = {data, propsInit, menu, duration, orientation}
+	const initialReducerData = { data, propsInit, menu, duration, orientation }
 
 	const [reduceState, reduceInputs]: [MainDataObject, Dispatch<MainDataActionTypes>] = useReducer(propsReducer, initialReducerData as any);
 	// console.log(reduceState, "red state")
@@ -77,25 +132,29 @@ export function Riff() {
 	let dimWidth, dimHeight;
 
 	if (size === 'Square') {
-		dimWidth = dimHeight = 720; 
+		dimWidth = dimHeight = 720;
 	} else if (size === 'Portrait') {
-		dimWidth = 720; 
-		dimHeight = 1280; 
+		dimWidth = 720;
+		dimHeight = 1280;
 	} else if (size === 'Landscape') {
-		dimWidth = 1280; 
-		dimHeight = 720; 
+		dimWidth = 1280;
+		dimHeight = 720;
 	} else {
 
-		dimWidth = dimHeight = 640; 
+		dimWidth = dimHeight = 640;
 	}
-
-	const playerStyle = size === "Portrait" ? '220px' : size === "Landscape " ? '620px' : '420px'
+	// console.log(size, "size")
+	const playerStyle = size === "Portrait" ? '220px' : size === "Landscape" ? '620px' : '420px';
+	// console.log(playerStyle)
+	const timeLineWidth = Math.round(mainWindowRef.current?.clientWidth! * 0.8)
 	return (
+		// <Layout>
 
-		<main className='flex flex-col relative h-[100dvh]'>
+		<main ref={mainWindowRef} className='flex flex-col h-screen relative'>
 			<img width={68} className='pt-2 pl-2 absolute' src="https://riff.52396b11c76ed6f3a85d0aef5888a944.r2.cloudflarestorage.com/imgs/1a55dfbc-4237-4e02-98b2-08c7f9b15c4c.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=6a93e0908aad5ec07b753c9a098c76ea%2F20231011%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20231011T121048Z&X-Amz-Expires=404800&X-Amz-Signature=0b1da681c6873e0f6b1b30257e4cf2613e31b31c7e81bb6aa345dbfcaa456422&X-Amz-SignedHeaders=host&x-id=GetObject" />
 
 			<SideBar propsData={reduceState} propsAction={reduceInputs} />
+			<ColorsEditor propsData={reduceState} propsAction={reduceInputs} />
 			<div className='flex justify-center gap-4 pt-4'>
 				<Player
 					ref={playerRef}
@@ -115,9 +174,10 @@ export function Riff() {
 			</div>
 			<PlayButton playerRef={playerRef} turnPlay={""} playing={true} />
 			<div className='flex justify-center items-center'>
-				<RifferTimeLine totalFrames={playerDuration} playerRef={playerRef} inputs={inputs as any} />
+				<RifferTimeLine tlWidth={timeLineWidth} mainWindow={mainWindowRef.current?.clientWidth} riffsTime={riffsTime} totalFrames={playerDuration} playerRef={playerRef} inputs={inputs as any} />
 			</div>
 		</main>
+		// </Layout>
 
 	);
 }

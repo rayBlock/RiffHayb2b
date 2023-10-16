@@ -5,6 +5,7 @@ import type { PlayerRef } from "@remotion/player";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCurrentPlayerFrame } from "../utils/use-current-frame";
 import clsx from "clsx";
+import { useShiftKey } from "../utils/use-key-board";
 // import { useEffect, useState } from "react";
 // import { useReducer, useMemo } from "react"
 // import { inputPropsReducer } from "@/utils/remotion/inputPropsReducer"
@@ -12,102 +13,143 @@ import clsx from "clsx";
 export const RifferTimeLine: React.FC<{
   playerRef: React.RefObject<PlayerRef>;
   inputs: any;
-  totalFrames: number
-}> = ({ playerRef, inputs, totalFrames }) => {
+  totalFrames: number;
+  mainWindow: any;
+  riffsTime: any;
+  tlWidth: number
+}> = ({ playerRef, inputs, totalFrames, mainWindow, riffsTime, tlWidth }) => {
   const { data } = inputs;
   // const [playing, setStatePlaying] = useState<boolean>(true);
   // const [spaceModeTime, setSpaceModeTime] = useState<any>(null);
   const frame = useCurrentPlayerFrame(playerRef);
+  console.log(riffsTime, "<--- riffsTIme ", mainWindow);
 
   const timeLineRef = useRef<HTMLDivElement | null>(null);
   // console.log(timeLineRef.current?.clientWidth, "timeline ref ?");
   const timeLineWidth: any = timeLineRef.current?.clientWidth
+
   const timeLinePixelPercentage = timeLineWidth / 100
 
+  // const riffTimeLineSections = Math.floor(data.length / 2)
+  // console.log(riffTimeLineSections);
+
+  const pixelsPerFrameRaw = tlWidth / totalFrames
+
+  const pixelsPerFrame: number = parseFloat(pixelsPerFrameRaw.toFixed(2));
 
 
-  // function spaceHandler({ key }: { key: string }) {
-  //   if (key === " ") {
-  //     turn_play();
-  //   }
-  // }
-  const handleDrag = (frameChange: number) => {
+
+
+
+  const handle_frame = (frameChange: number) => {
+    // console.log(frameChange, "framechange")
     playerRef.current?.seekTo(frameChange);
   };
-
-
-
-
-  // useEffect(() => {
-  //   window.addEventListener("keydown", spaceHandler);
-  //   return () => {
-  //     window.removeEventListener("keydown", spaceHandler);
-  //   };
-  // }, []);
-
-
-  // function turn_play() {
-  //   const currentTime = Date.now();
-
-  //   if (spaceModeTime === null || currentTime - spaceModeTime > 200) {
-  //     let playCondition = playerRef.current?.isPlaying();
-  //     playCondition ? playerRef.current?.pause() : playerRef.current?.play()
-  //     setStatePlaying(!playCondition)
-  //   }
-  //   setSpaceModeTime(currentTime)
-
-  // };
-
-
-
-
 
   const progress = useMemo(() => {
     // TODO TOTAL FRAMES
     return (frame / totalFrames) * 100;
   }, [frame]);
 
+  // TODO get shift into here... because of state bug
+  const shift = useShiftKey();
+
+  function spaceArrowRightHandler({ key }: { key: string }) {
+    if (key === "ArrowRight") {
+      shift ? handle_frame(frame + 10)
+        :
+        handle_frame(frame + 1)
+    }
+    if (key === "ArrowLeft") {
+      shift ? handle_frame(frame - 10)
+        :
+        handle_frame(frame - 1)
+    }
+  }
+  useEffect(() => {
+    window.addEventListener("keydown", spaceArrowRightHandler);
+    return () => {
+      window.removeEventListener("keydown", spaceArrowRightHandler);
+    };
+  }, [frame, shift]);
+
+
+
+
 
   return (
-    <div className="max-w-md relative flex flex-col justify-center items-center ">
-     
-      <div>
+
+    <div ref={timeLineRef} className={clsx(`grid group translate-y-24 pt-12 pb-4 grid-flow-col items-center justify-center`)}>
+      <div className="absolute -translate-y-4">{shift}</div>
+      {data.map((item: any, index: number) => (
 
 
-        <div ref={timeLineRef} className={clsx(`grid grid-flow-col px-auto gap-1 pt-24 relative items-center justify-center`)}>
-          {data.map((item: any, index: number) => (
-            // console.log(item, "item"),
-            <div
-              key={index} className={clsx(`z-10  `)}
-            >
-              {index % 2 === 0 ?
+        <div
+          key={index} className={clsx(`z-20`)}
+        >
+          {index % 2 === 0 ?
 
-                // RiffBar
-                <div style={{ width: `${item.duration / 25}vw`, minWidth: '10px' }}
-                  className="h-6 md:h-10 border-2 border-black rounded bg-[#d3e0f6]">
+            // RiffBar
+            <div style={{
+              // width: `${pixelsPerFrame * data[index].duration}px`
 
-                </div>
 
-                :
+              width: ` ${index === 0 ?
+                pixelsPerFrame * (item.duration 
+                  - data[index + 1].duration 
+                  )
+                : index === data.length - 1
+                  ? pixelsPerFrame * (item.duration - ( data[index - 1].duration  )) 
+                  // ? pixelsPerFrame * data[index].duration
+                  //TODO: figure out how to do the math for this one 
+                  : pixelsPerFrame * (item.duration - (data[index - 1].duration + data[index + 1].duration))
+                //  - Math.round((riffTimeLineSections * 10) / (riffTimeLineSections - 1))
+                }px `,
 
-                // Traverse 
-                <div className=" h-4 sm:min-w-[2vw] border-2 border-black rounded bg-black">
+                  background: `${item.id === riffsTime.id ? "black" : "transparent"}`
 
-                </div>
-              }
+
+              //`${item.duration}px`, 
+              // minWidth: '10px'
+            }}
+              className=" h-6 md:h-10 border-2 border-black  rounded-lg">
+
             </div>
-          ))}
-          <DraggableFramePointer
-            timeLinePixelPercentage={timeLinePixelPercentage}
-            frame={frame}
-            progress={progress}
-            onDrag={handleDrag}
-            totalFrames={totalFrames} />
+
+            :
+
+            // Traverse 
+            <div
+              style={{ width: `${(pixelsPerFrame * item.duration)-8}px`, 
+              background: `${item.id === riffsTime.id ? "black" : "transparent"}`
+
+
+             }}
+              className=" h-4 border-2 mx-1 border-black rounded-md ">
+              {/* {item.duration} */}
+            </div>
+          }
         </div>
-      </div>
+      ))}
+      <DraggableFramePointer
+        timeLinePixelPercentage={timeLinePixelPercentage}
+        frame={frame}
+        progress={progress}
+        onDrag={handle_frame}
+        totalFrames={totalFrames} />
     </div>
+
   )
 };
+
+
+
+
+
+
+
+
+
 
 
 interface DraggableDivProps {
@@ -115,11 +157,10 @@ interface DraggableDivProps {
   frame: number
   totalFrames: number
   timeLinePixelPercentage: number
-
   onDrag: (dragDistance: number) => void;
 }
 
-const DraggableFramePointer: React.FC<DraggableDivProps> = ({ frame, progress,  totalFrames, onDrag, timeLinePixelPercentage }) => {
+const DraggableFramePointer: React.FC<DraggableDivProps> = ({ frame, progress, totalFrames, onDrag, timeLinePixelPercentage }) => {
   const [isDragging, setIsDragging] = useState(false);
   const startXRef = useRef<number>(0);
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -165,18 +206,30 @@ const DraggableFramePointer: React.FC<DraggableDivProps> = ({ frame, progress,  
   }, [isDragging, progress, onDrag]);
 
 
+
   return (
     <>
       <div
         ref={divRef}
         style={{ left: `${progress}% ` }}
-        className={clsx('h-5 absolute w-20 pb-0 sm:pb-6 -ml-10 grid-cols-1 grid justify-items-center items-center cursor-move bg-black group ring-black ring-2 border-black rounded-full ')}>
-        <p className="h-6 sm:h-6 place-self-center select-none group-hover:text-red-200  text-white ">
-          {frame + 1} <br></br>
-          {/* // seconds... */}
-          {/* {Math.floor(frame / 30)} */}
+        className={clsx('h-8 absolute z-10 w-20 pb-0 -translate-y-14 -ml-10 grid-cols-1 grid justify-items-center cursor-pointer bg-black group ring-black ring-2 border-black rounded-full ')}
+      >
+        <p className="h-8 z-0 select-none pt-[2px] group-hover:text-red-200  text-white ">
+          {frame === 0 ? '0' : `${Math.floor(frame / 30) + 1}s`}
+
+
         </p>
         <div className="h-24 w-[3px] bg-black  " />
+        <div className={clsx('h-7 w-20 pb-0 z-10 hidden sm:pb-6 cursor-pointer  grid-cols-1 hover:grid group-hover:grid justify-items-center items-center  bg-black group ring-black ring-2 border-black rounded-full ')}
+        >
+          <p className="h-6  z-0 sm:h-6 place-self-center select-none group-hover:text-red-200  text-white ">
+
+            {frame + 1}
+
+
+          </p>
+        </div>
+
       </div>
     </>
   );

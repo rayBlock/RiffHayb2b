@@ -40,7 +40,7 @@ const PropMenuButton = ({ child, propsData, menuArg, propsAction }: MenuProps) =
             onClick={() => updateMenuProperty(menuArg)}
             className={clsx(
                 menuClass,
-                `group  p-1 cursor-pointer w-full sm:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center `
+                `group  p-1 cursor-pointer w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center `
 
             )}>
             {child}
@@ -49,28 +49,13 @@ const PropMenuButton = ({ child, propsData, menuArg, propsAction }: MenuProps) =
 
     )
 }
-export type menu = {
-    colors: boolean,
-    images: boolean,
-    videos: boolean,
-    texts: boolean
-}
 
-export const menu: menu = {
-    colors: false,
-    images: false,
-    videos: false,
-    texts: false
-
-}
 
 
 export const SideBar = ({ propsData, propsAction }: SidebarProps) => {
     //   console.log(riffData, "data in sidebarr")
     // const { inputs, data } = riffData.riff.inputs;
     // console.log(data, "<-- data individual Riff-E data in sidebar")
-
-
 
     const iconH = 36
     const iconW = iconH
@@ -90,7 +75,7 @@ export const SideBar = ({ propsData, propsAction }: SidebarProps) => {
 
 
     return (
-        <div className="absolute bottom bottom-0 sm:bottom-full px-2 sm:px-0 w-full sm:w-auto pb-4 sm:pb-0 sm:top-1/2 sm:pl-4 flex sm:flex-col gap-3">
+        <div className="absolute bottom bottom-0 lg:bottom-full px-2 w-full lg:w-auto pb-4 lg:pb-0 lg:top-1/2 sm:px-4 flex lg:flex-col gap-3">
 
 
             <PropMenuButton menuArg="colors" propsData={propsData} propsAction={propsAction} child={<ColorPalette iconH={iconH} iconW={iconW} />} />
