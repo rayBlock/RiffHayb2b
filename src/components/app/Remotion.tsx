@@ -68,7 +68,6 @@ export function Remotion() {
 					autoPlay
 					loop
 				/>
-
 				<form
 					onSubmit={(e) => {
 						e.preventDefault();

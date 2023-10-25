@@ -5,6 +5,7 @@ import type { PositionDataActionTypes, PositionDataObject, UpdateItemPositionAct
 import type { MainDataActionTypes, MainDataObject, UpdateItemAction } from "../utils/propsReducer";
 import { getValueForIdAndPropName } from "../utils/inputValueExtraction";
 
+
 interface ColorBarProps {
   positionData: PositionDataObject
   positionAction: Dispatch<PositionDataActionTypes>
@@ -23,9 +24,9 @@ interface ColorBarProps {
 
 
 
-export const ColorsEditor = ({ positionData, propsState, positionAction, propsActions, currentRiff, mainWindow }: ColorBarProps) => {
+export const ColorsEditor = ({ positionData, propsState, positionAction, propsActions, currentRiff,  }: ColorBarProps) => {
 
-  console.log(currentRiff, "c Editor riff current")
+
 
   const [isDragging, setIsDragging] = useState(false);
   const startXRef = useRef<number>(0);
@@ -112,34 +113,45 @@ export const ColorsEditor = ({ positionData, propsState, positionAction, propsAc
 
   const colorsShown = positionData.menu.colors ? 'block' : 'hidden'
 
+  const arrangedPropsFields = [
+    "lg:top-44 lg:left-32",
+    "lg:top-1/2 lg:left-40 ",
+    "lg:top-14 lg:right-20 ",
+  ]
+
+  const position = positionData.menu.images && positionData.menu.texts ? arrangedPropsFields[2] :
+    positionData.menu.images || positionData.menu.texts ? arrangedPropsFields[1] :
+      arrangedPropsFields[0]
+
   return (
-    <div>
+    <div ref={divRef}>
       <div
-        ref={divRef}
         style={{ transform: `translate3d(${positionData.menu.colorsX}px, ${positionData.menu.colorsY}px, 0px)` }}
-        className={clsx(colorsShown, "absolute border border-black bg-[#d3e0f6] p-4 rounded-lg cursor-pointer z-10 grid grid-cols-6 gap-2")}>
 
-        {updatedColors.map((colorItem, index) => (
-          <input
-            key={index} style={{ background: colorItem.value, width: '28px', height: '28px' }}
-            onChange={(e) => updateItemProperty(colorItem.id, colorItem.propName, e.target.value)}
-            className={clsx("rounded-full p-3 appearance-none transition-all hover:border-2 border-red ", colorItem.id === currentRiff.id ? `border-b-[6px] border-t-[6px] border-black` : "border-b-2 border-black")}
-            type="color"
+        className={clsx(colorsShown, position, " absolute left- border-2  border-black shadow-[1px_4px_0px_#000000] bg-[#d3e0f6] p-4 rounded-3xl rounded-tr-none cursor-pointer z-10 grid grid-cols-6 gap-2")}
+      // className={clsx(colorsShown, "target absolute border-2  border-black shadow-[1px_4px_0px_#000000] bg-[#d3e0f6] p-4 rounded-3xl rounded-tl-none cursor-pointer z-10 grid grid-cols-6 gap-2")}
 
-          />
+      >{updatedColors.map((colorItem, index) => (
+        <input
+          key={index} style={{ background: colorItem.value, width: '28px', height: '28px' }}
+          onChange={(e) => updateItemProperty(colorItem.id, colorItem.propName, e.target.value)}
+          className={clsx("rounded-full  appearance-none transition-all hover:border-2 border-red ", colorItem.id === currentRiff.id ? `underline` : "")}
+          type="color"
 
-
-
-        ))}
+        />
 
 
+
+      ))}
       </div>
-      {/* <div style={{transform:`translate3d(${positionData.menu.colorsX}px, ${positionData.menu.colorsY + divRef.current?.clientHeight! + 5}px, 0px)`}}
-      className={clsx("bg-white w-60 border border-black ")}>
-      color picker below ?
-    </div> */}
-    </div >
+    </div>
+
   )
 }
 
 
+
+{/* <div style={{transform:`translate3d(${positionData.menu.colorsX}px, ${positionData.menu.colorsY + divRef.current?.clientHeight! + 5}px, 0px)`}}
+className={clsx("bg-white w-60 border border-black ")}>
+color picker below ?
+</div> */}

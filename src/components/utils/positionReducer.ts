@@ -1,7 +1,9 @@
+import type { playerDimensions } from './propsReducer';
 
 // Define action types
 const UPDATE_ITEM_POSITION = 'UPDATE_ITEM_POSITION'; // You can use your custom action type
 const UPDATE_MENU = 'UPDATE_MENU'; // You can use your custom action type
+const UPDATE_ORIENTATION = 'UPDATE_ORIENTATION'; // You can use your custom action type
 
 export interface UpdateItemPositionAction {
 	type: typeof UPDATE_ITEM_POSITION;
@@ -12,7 +14,7 @@ export interface UpdateItemPositionAction {
 		valueY: number; // You may want to adjust the type based on the nature of data
 	};
 }
-export type menuPropNames = 'colors' | 'images' | 'videos' | 'texts' ;
+export type menuPropNames = 'colors' | 'images' | 'videos' | 'texts';
 
 export interface UpdateMenuAction {
 	type: typeof UPDATE_MENU;
@@ -20,26 +22,34 @@ export interface UpdateMenuAction {
 		name: menuPropNames;
 	};
 }
-export type PositionDataActionTypes = UpdateItemPositionAction | UpdateMenuAction;
+
+export interface UpdateOrientationAction {
+	type: typeof UPDATE_ORIENTATION;
+	payload: {
+		value: playerDimensions;
+	};
+}
+export type PositionDataActionTypes =
+	| UpdateItemPositionAction
+	| UpdateMenuAction
+	| UpdateOrientationAction;
 
 // Define the state type
 export interface PositionDataObject {
-	orientation: string;
-	// prompt: string;
-	// text: { output: object };
+	orientation: playerDimensions;
 	menu: {
 		colors: boolean;
 		colorsX: number;
 		colorsY: number;
 		texts: boolean;
 		textsX: number;
-		textsY:number;
+		textsY: number;
 		images: boolean;
-		imagesY:number;
-		imagesX:number;
+		imagesY: number;
+		imagesX: number;
 		videos: boolean;
-		videosX:number;
-		videosY:number;
+		videosX: number;
+		videosY: number;
 	};
 }
 
@@ -55,19 +65,23 @@ export const positionReducer = (
 				menu: {
 					...state.menu,
 					[action.payload.nameX]: action.payload.valueX,
-					[action.payload.nameY]: action.payload.valueY
-
+					[action.payload.nameY]: action.payload.valueY,
 				},
 			};
 
 		case UPDATE_MENU:
-
 			return {
 				...state,
 				menu: {
 					...state.menu,
 					[action.payload.name]: !state.menu[action.payload.name],
 				},
+			};
+
+		case UPDATE_ORIENTATION:
+			return {
+				...state,
+				orientation: action.payload.value,
 			};
 
 		default:

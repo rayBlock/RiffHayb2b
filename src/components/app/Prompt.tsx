@@ -330,6 +330,7 @@ const SimpleModalButton = ({
 	);
 };
 
+
 const ShareDialog = ({ response }: { response: RouterOutput['prompts']['getPrompt'] }) => {
 	const promptData = response.prompt;
 	const trpcUtils = trpc.useContext();

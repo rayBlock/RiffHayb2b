@@ -45,7 +45,7 @@ export function AnfaMotion({ img, color1, sText2, mText }: AnfaProps) {
 	const colorG = frame === 0 ? "red" : 
 	frame === 1 ? "blue" : 
 	frame === 2 ?  "orange" : 
-	frame === 10 ?  "orange" : color1
+	frame === 10 ?  "orange" : sText2?.color
 
 	return (
 		<AbsoluteFill
@@ -87,7 +87,7 @@ export function AnfaMotion({ img, color1, sText2, mText }: AnfaProps) {
 					shadow: 3,
 					shadowColor: 'black',
 					width: width * 0.8,
-					color: colorG,
+					color: mText?.color,
 					stroke: 2,
 					strokeColor:'black',
 					...mText

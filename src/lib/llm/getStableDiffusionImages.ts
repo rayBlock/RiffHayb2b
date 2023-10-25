@@ -48,7 +48,12 @@ export default async function getAiImages({ query, size, amount }: props) {
 	const inputArray = query.map((description:string) => {
 		return { text: description };
 	});
+	const limitedInputArray = inputArray.slice(0, 5);
 
+
+
+	
+	
 	const response = await fetch(`${apiHost}/v1/generation/${engine}/text-to-image`, {
 		method: 'POST',
 		headers: {
@@ -57,10 +62,8 @@ export default async function getAiImages({ query, size, amount }: props) {
 			Authorization: `Bearer ${apiKey}`,
 		},
 		body: JSON.stringify({
-			text_prompts: [
-				...inputArray
-			],
-
+			// text_prompts: inputArray,
+			text_prompts: limitedInputArray,
 			// TODO: have to find out what aspect ratios to build depending on format input from User
 			// How strictly the diffusion process adheres to the prompt text (higher values keep your image closer to your promp
 			cfg_scale: 15,
@@ -77,7 +80,10 @@ export default async function getAiImages({ query, size, amount }: props) {
 	});
 
 	if (!response.ok) {
-		throw new Error(`Non-200 response: ${await response.text()}`);
+		console.log(response, "images not ok...")
+		console.log(await response.text(), "images not ok... text ?")
+
+		throw new Error(`Non-200 response: ${response}`);
 	}
 
 	interface GenerationResponse {
@@ -89,7 +95,8 @@ export default async function getAiImages({ query, size, amount }: props) {
 	}
 
 	const responseJSON = (await response.json()) as GenerationResponse;
-
+		console.log("json response");
+		
 	async function uploadFilesToS3(bucketName: string, response: any) {
 		const uploadedUrls = []; // Array to store the uploaded file URLs
 		for (const file of response.artifacts) {
@@ -107,6 +114,8 @@ export default async function getAiImages({ query, size, amount }: props) {
 			};
 
 			try {
+				console.log("upload ?");
+				
 				await S3.send(new PutObjectCommand(params));
 				const url = await getSignedUrl(
 					S3,

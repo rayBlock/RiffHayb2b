@@ -1,5 +1,5 @@
 ---
-import AppLayout from '../../../components/app/AppLayout.astro';
+import AppBuilderLayout from '../../../components/app/AppBuilderLayout.astro';
 import { Root } from '../../../components/app/Root';
 import { createRouterContext } from '../../../lib/router';
 
@@ -9,6 +9,6 @@ if (res.kind === 'response') {
 }
 ---
 
-<AppLayout title="Prompt / Create">
+<AppBuilderLayout title="Prompt / Create">
 	<Root client:load getContext={() => res.context} />
-</AppLayout>
+</AppBuilderLayout>

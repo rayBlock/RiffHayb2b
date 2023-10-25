@@ -8,18 +8,19 @@ import clsx from 'clsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { getQueryKey } from '@trpc/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 
 export function CreateRiff() {
-    
-    
+
+
     const { hasSubscription } = useSubscriptions();
     // console.log(hasSubscription, "has subs ??")
-    
+
     // const [duration, setDuration] = useState<number>(10)
-    
+    const [isLoading, setIsLoading] = useState(false)
     const queryClient = useQueryClient();
-	const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const createRiffMutation = trpc.remotion.createRiff.useMutation({
         onSettled: () => {
@@ -38,15 +39,17 @@ export function CreateRiff() {
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
+                    setIsLoading(true)
+
                     const form = e.currentTarget;
                     const formData = new FormData(form);
-                    const data:any = {
+                    const data: any = {
                         ...(Object.fromEntries(formData) as {
                             // title: string;
                             // description: string;
                             privacyLevel: PrivacyLevel;
                             duration: any,
-                            orientation:string
+                            orientation: string
                             prompt: string
 
                         }),
@@ -61,59 +64,61 @@ export function CreateRiff() {
                     // const { submitter } = e.nativeEvent as any as { submitter: HTMLButtonElement };
                     if (data.prompt) {
                         createRiffMutation.mutate(data,);
-                    } 
-                        else { alert('You need to provide a prompt');}
+                    }
+                    else {
+                        alert('You need to provide a prompt');
+                        setIsLoading(false)
+                    }
                     //     addPromptMutation.mutate(data);
                     // }
                 }}
             >
-                <div className="mt-4">
-                    <label
-                        className="block text-sm font-medium text-gray-700"
-                        htmlFor="promptPrivacyLevel"
-                    >
-                        Visibility
-                    </label>
-                    <div className="mt-1 w-full">
-                        <select
-                            id="promptPrivacyLevel"
-                            name="privacyLevel"
-                            className="block rounded-md outline-none border border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            defaultValue={hasSubscription ? "team" : "public"}
-                        // onChange={(e) => {
-                        //     const value = e.currentTarget.value as PrivacyLevel;
-                        //     setNewIsPublic(value === 'public');
-                        // }}
-                        >
-                            {hasSubscription ? <>
-                                <option value="public">Public </option>
 
-                                <option value="team">
-                                    Team
-                                </option>
-                                <option value="private">Private</option>
-                            </>
-                                : <option value="public">Public </option>}
-                        </select>
-                    </div>
-                </div>
 
 
 
                 <div className='flex justify-end items-end flex-col w-full'>
+                    <div className="mt-4 ml-4">
+                        <label
+                            className="block text-sm font-medium text-gray-700"
+                            htmlFor="promptPrivacyLevel"
+                        >
+                            Visibility
+                        </label>
+                        <div className="mt-1 w-full">
+                            <select
+                                id="promptPrivacyLevel"
+                                name="privacyLevel"
+                                className="block rounded-md outline-none border border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                defaultValue={hasSubscription ? "team" : "public"}
+                            // onChange={(e) => {
+                            //     const value = e.currentTarget.value as PrivacyLevel;
+                            //     setNewIsPublic(value === 'public');
+                            // }}
+                            >
+                                {hasSubscription ? <>
+                                    <option value="public">Public </option>
 
+                                    <option value="team">
+                                        Team
+                                    </option>
+                                    <option value="private">Private</option>
+                                </>
+                                    : <option value="public">Public </option>}
+                            </select>
+                        </div>
+                    </div>
                     <div className="mt-4">
 
                         <label
-                            className="block text-xl pl-2 pb-1 font-medium text-gray-700"
+                            className=" hidden text-xl pl-2 pb-1 font-medium text-gray-700"
                             htmlFor="promptPrivacyLevel"
                         >
                             Duration
                         </label>
                         <select
                             name="duration"
-                            className="rounded-md ring-0 outline-none  border border-gray-300 p-4 text-sm"
-
+                            className="rounded-md ring-0  outline-none shadow-[0px_0px_4px_0px_black] border border-gray-300 p-4 text-sm"
                             defaultValue={10}
                         >
                             <option>Select a duration</option>
@@ -147,7 +152,7 @@ export function CreateRiff() {
                             <select
 
                                 name="orientation"
-                                className="block rounded-md outline-none border border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                className="block rounded-md outline-none shadow-md border border-gray-300 p-2  focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 defaultValue={"Portrait"}
                             // onChange={(e) => {
                             //     const value = e.currentTarget.value as PrivacyLevel;
@@ -213,7 +218,14 @@ export function CreateRiff() {
 
 
 
-                    <button className='border-2 border-black p-4 outline-none hover:bg-red-200 rounded-xl mt-8' type="submit" name="buttonsubmititi" >create </button>
+                    <button
+                        disabled={isLoading}
+                        className={clsx(
+                            isLoading ?
+                                'border-2 text-transparent -translate-y-1 shadow-[1px_2px_0px_0px_black] border-black p-4 outline-none mt-8'
+                                :
+                                'border-2 border-black shadow-[1px_4px_0px_0px_black] p-4 outline-none hover:bg-red-200 rounded-xl mt-8')}
+                        type="submit" name="buttonsubmititi" >create </button>
                 </div>
             </form>
 

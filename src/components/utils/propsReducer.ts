@@ -3,9 +3,12 @@ interface InputProps {
 	[key: string]: string;
 }
 
+export type playerDimensions =  "Landscape" | "Portrait" | "Square" | "custom";
 // Define action types
 const UPDATE_ITEM = 'UPDATE_ITEM'; // You can use your custom action type
-const UPDATE_MENU = 'UPDATE_MENU'; // You can use your custom action type
+const UPDATE_TEXT_ITEM = 'UPDATE_TEXT_ITEM';
+const UPDATE_PLAYER_DIMENSION = "UPDATE_PLAYER_DIMENSION" // You can use your custom action type
+ // You can use your custom action type
 
 export interface UpdateItemAction {
 	type: typeof UPDATE_ITEM;
@@ -15,15 +18,27 @@ export interface UpdateItemAction {
 		value: any; // You may want to adjust the type based on the nature of data
 	};
 }
-export type  menuPropNames = 'colors' | 'images' | 'videos' | 'texts' | "none";
-
-export interface UpdateMenuAction {
-	type: typeof UPDATE_MENU;
+export interface UpdateTextItemAction {
+	type: typeof UPDATE_TEXT_ITEM;
 	payload: {
-		name: menuPropNames
+		id: string;
+		propName: string;
+		textProp:string;
+		value: any; // You may want to adjust the type based on the nature of data
 	};
 }
-export type MainDataActionTypes = UpdateItemAction | UpdateMenuAction;
+
+export interface UpdatePlayerDimension {
+	type: typeof UPDATE_PLAYER_DIMENSION
+	payload: {
+		playerWidth?: number;
+		playerHeight?:number;
+		orientation: playerDimensions; // You may want to adjust the type based on the nature of data
+	};
+}
+
+
+export type MainDataActionTypes = UpdateItemAction  | UpdateTextItemAction | UpdatePlayerDimension ;
 
 // Define the state type
 export interface MainDataObject {
@@ -34,7 +49,7 @@ export interface MainDataObject {
 		max: number;
 		min: number;
 		name: string;
-		props: InputProps; // Dynamic properties
+		props: InputProps | any; // Dynamic properties
 	}>;
 	duration: string;
 	// images: string[];
@@ -48,15 +63,12 @@ export interface MainDataObject {
 		};
 		videos: Array<{ propName: string; id: string }>;
 	};
-	orientation: string;
+	orientation: playerDimensions;
+	playerWidth: number | undefined;
+	playerHeight:number | undefined;
 	// prompt: string;
 	// text: { output: object };
-	menu: {
-		colors: boolean;
-		texts: boolean;
-		images: boolean;
-		videos: boolean;
-	};
+	
 }
 
 // Reducer function
@@ -77,64 +89,30 @@ export const propsReducer = (
 
 			return { ...state, data: updatedData };
 
-		case UPDATE_MENU:
-			// Find the item with a matching id
-			console.log('menu switch', action);
+			case UPDATE_TEXT_ITEM:
+				// Find the item with a matching id
+				const updatedTextColorData = state.data.map((item) => {
+					if (item.id === action.payload.id) {
+						// Update the specific property within the props object
+						item.props[action.payload.propName][action.payload.textProp] = action.payload.value;
+					}
+					return item;
+				});
+	
+				return { ...state, data: updatedTextColorData };
+				
 
-			return {
-                ...state,
-				menu: {
-					...state.menu,
-                    [action.payload.name]: !state.menu[action.payload.name],
+			case UPDATE_PLAYER_DIMENSION:
+					
 
-				},
-			};
+				
+				return {...state,
+					 orientation: action.payload.orientation, 
+					 playerWidth: action.payload.playerWidth,
+					 playerHeight: action.payload.playerHeight,
+					 }
 
 		default:
 			return state;
 	}
 };
-
-// import type { MainDataObject } from "./inputPropsReducer";
-
-// const UPDATE_ITEM = "UPDATE_ITEM";
-
-// // Define the action interface
-// interface UpdateItemAction {
-//   type: typeof UPDATE_ITEM;
-//   payload: {
-//     id: string;
-//     propName: string;
-//     value: any;
-//   };
-// }
-// export const inputPropsReducer = (
-//   state: MainDataObject,
-//   action: UpdateItemAction
-// ): MainDataObject => {
-//   switch (action.type) {
-//     case UPDATE_ITEM:
-//       // Filter and update the state based on action payload
-//       const updatedState = {
-//         ...state,
-//         [action.payload.propName]: state[action.payload.propName].map(
-//           (item) => {
-//             if (item.id === action.payload.id) {
-//               return {
-//                 ...item,
-//                 props: {
-//                   ...item.props,
-//                   [action.payload.propName]: action.payload.value,
-//                 },
-//               };
-//             }
-//             return item;
-//           }
-//         ),
-//       };
-
-//       return updatedState;
-//     default:
-//       return state;
-//   }
-// };

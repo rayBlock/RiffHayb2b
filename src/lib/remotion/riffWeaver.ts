@@ -23,18 +23,20 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 	const intDuration = parseInt(duration);
 	const prepInputs = hayMaker({ duration: intDuration });
 
+		
 	const amount = prepInputs.pickedRiffs?.length;
 	// const leonardoImages = await getLeonardoAIImages({
 	// 	query: llmSchemaData?.output.imgPrompts,
 	// 	size: 'Portrait'
 	// })
-	console.log(amount);
+
 	const images: string[] | void = await getAiImages({
 		query: llmSchemaData?.output.imgPrompts,
 		size: orientation as any,
 		amount: amount as number,
 	});
-
+	console.log("images created");
+	
 	//  const query: any = llmSchemaData?.output.videoPrompt;
 
 	// let pxlVids: any = [];
@@ -219,17 +221,28 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 
 		propertyNames.forEach((propertyName) => {
 			if (item[propertyName]) {
+				console.log(item[propertyName]);
+				
 				item[propertyName].forEach((nestedObj: any) => {
+					console.log(nestedObj, "nestedOBJ");
+					
 					let keyProp = Object.keys(nestedObj);
+					console.log(keyProp, "keyprop");
+					
 					if (keyProp.length > 0) {
 						const keyName: string = keyProp[0] as string;
 						switch (propertyName) {
 							case 'short':
+								// keys[keyName].text = llmSchemaData?.output.shortS[shortIndex] ;
 								keys[keyName] = { text: llmSchemaData?.output.shortS[shortIndex] };
+								console.log(keys, "<-- keys")
+
 								shortIndex++;
 								break;
 							case 'mid':
-								keys[keyName] = { text: llmSchemaData?.output.midS[midIndex] };
+								// keys[keyName].text =  llmSchemaData?.output.midS[midIndex];
+							 	keys[keyName] = { text: llmSchemaData?.output.midS[midIndex] };
+										console.log(keys)
 								midIndex++;
 								break;
 							// case 'long':
@@ -239,10 +252,14 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 								break;
 						}
 
-						const propertiesObject = nestedObj[keyName].properties;
+
+								// TODO FIGURE OUT THIS ONE
+						const propertiesObject = nestedObj.prop.properties;
 						for (const propName in propertiesObject) {
 							if (propertiesObject.hasOwnProperty(propName)) {
 								const property = propertiesObject[propName];
+								console.log(property, "property... riffweaver");
+								
 								if (property.hasOwnProperty('default')) {
 									const defaultValue = property.default;
 									// Assign the extracted property to the corresponding key
@@ -317,7 +334,8 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 			propsIndex++;
 		}
 	});
-
+	console.log("them input props ?");
+	
 	const inputProps = {
 		data: transformedData,
 		images: images,

@@ -72,7 +72,7 @@ export const RifferTimeLine: React.FC<{
 
   return (
 
-    <div ref={timeLineRef} className={clsx(`grid  group translate-y-24 pt-12 pb-4 grid-flow-col items-center justify-center`)}>
+    <div ref={timeLineRef} className={clsx(`grid  group translate-y-4 lg:translate-y-20 pt-12 pb-4 grid-flow-col items-center justify-center`)}>
       <div className="absolute -translate-y-4">{shift}</div>
       {data.map((item: any, index: number) => (
 
@@ -105,7 +105,7 @@ export const RifferTimeLine: React.FC<{
               //`${item.duration}px`, 
               // minWidth: '10px'
             }}
-              className=" h-6 md:h-10 border-2 border-black  rounded-lg">
+              className=" h-6 lg:h-10 border-2 border-black  rounded-lg">
 
             </div>
 
@@ -205,14 +205,14 @@ const DraggableFramePointer: React.FC<DraggableDivProps> = ({ frame, progress, t
       <div
         ref={divRef}
         style={{ left: `${progress}% ` }}
-        className={clsx('h-8 absolute z-10 w-10 sm:w-20 pb-0 -translate-y-10 -ml-5 sm:-ml-10 grid-cols-1 grid justify-items-center cursor-pointer bg-black group ring-black ring-2 border-black rounded-full ')}
+        className={clsx('h-8 absolute z-10 w-10 sm:w-20 pb-0 -translate-y-7 lg:-translate-y-10 -ml-5 sm:-ml-10 grid-cols-1 grid justify-items-center cursor-pointer bg-black group ring-black ring-2 border-black rounded-full ')}
       >
         <p className="h-8 z-0 select-none pt-[2px] group-hover:text-red-200  text-white ">
           {frame === 0 ? '0' : `${Math.floor(frame / 30) + 1}s`}
 
 
         </p>
-        <div className="h-20 w-[3px] bg-black  " />
+        <div className="h-14 lg:h-20 w-[3px] bg-black  " />
         <div className={clsx('h-7 w-12 sm:w-20 pb-0 z-10 hidden sm:pb-6 cursor-pointer  grid-cols-1 hover:grid group-hover:grid justify-items-center items-center  bg-black group ring-black ring-2 border-black rounded-full ')}
         >
           <p className="h-6  z-0 sm:h-6 place-self-center select-none group-hover:text-red-200  text-white ">

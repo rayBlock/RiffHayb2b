@@ -3,7 +3,9 @@
 
 import clsx from "clsx";
 
-import { ImageIcon, TextIcon, VideoIcon, ColorPalette } from "./Icons/PropMenuItems";
+import { ImageIcon, TextIcon,
+    // VideoIcon,
+     ColorPalette } from "./Icons/PropMenuItems";
 
 import type { Dispatch, RefObject } from "react";
 import type { PositionDataActionTypes, PositionDataObject, UpdateMenuAction, menuPropNames } from "../utils/positionReducer";
@@ -50,6 +52,9 @@ type FakeMenuProps = {
 export const PropMenuButton = ({ hiddenProp, child, propsData, menuArg, propsAction }: MenuProps) => {
 
     const updateMenuProperty = (name: menuPropNames,) => {
+
+        
+        
         const action: UpdateMenuAction = {
             type: 'UPDATE_MENU',
             payload: {
@@ -57,8 +62,8 @@ export const PropMenuButton = ({ hiddenProp, child, propsData, menuArg, propsAct
             },
         };
         propsAction(action);
+        console.log(propsData, "propsdata in button");
     };
-    console.log(propsData, "sidebar prposdaa")
     const menuClass = propsData.menu[menuArg] as any ? 'bg-green-200 ' : '';
 
     return (
@@ -68,7 +73,7 @@ export const PropMenuButton = ({ hiddenProp, child, propsData, menuArg, propsAct
             className={clsx(
                 hiddenProp,
                 menuClass,
-                `group  p-1 cursor-pointer w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center `
+                `group p-1 cursor-pointer z-30 w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center `
 
             )}>
             {child}
@@ -103,13 +108,21 @@ export const SideBar = ({ playerRef, propsData, propsAction }: SidebarProps) => 
 
 
     return (
-        <div className="absolute bottom bottom-0 lg:bottom-full px-2 w-full lg:w-auto pb-4 lg:pb-0 lg:top-1/2 sm:px-4 flex lg:flex-col gap-3">
+        <div className="absolute bottom bottom-0 lg:bottom-full z-20 px-2 w-full lg:w-auto pb-4 lg:pb-0 lg:top-1/2 sm:px-4 flex lg:flex-col gap-3">
 
 
             <PropMenuButton menuArg="colors" propsData={propsData} propsAction={propsAction} child={<ColorPalette iconH={iconH} iconW={iconW} />} />
             <PropMenuButton menuArg="images" propsData={propsData} propsAction={propsAction} child={<ImageIcon iconH={iconH} iconW={iconW} />} />
             <PropMenuButton menuArg="texts" propsData={propsData} propsAction={propsAction} child={<TextIcon iconH={iconH} iconW={iconW} />} />
-            <FakeMenuButton hiddenProp="flex md:hidden" child={<PlayButton scale="scale-100" playerRef={playerRef} />} />
+                    <PlayButton 
+                    hiddenProp="lg:hidden group rounded-tl-none border-2 border-black
+                      p-1 cursor-pointer w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center "
+                     scale="scale-90" playerRef={playerRef} />
+            
+                    {/* Play Button shenanigans because of showing it in 2 places  */}
+            {/* <FakeMenuButton hiddenProp="flex md:hidden" child={
+                
+                } /> */}
             {/* <PropMenuButton menuArg="none" propsData={propsData} propsAction={propsAction} child={<VideoIcon iconH={iconH} iconW={iconW} />} />
                 
             
@@ -132,8 +145,8 @@ export const FakeMenuButton = ({ hiddenProp, child, clickhandler }: FakeMenuProp
 
     return (
         // selectable for ADA ?  with button but space bar issues... 
-        <button style={{ borderTopLeftRadius: '0px', border: '2px solid black' }}
-            onClick={() => console.log("hello")}
+        <div style={{ borderTopLeftRadius: '0px', border: '2px solid black' }}
+
             className={clsx(
                 hiddenProp,
                 `group  p-1 cursor-pointer w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center `
@@ -141,7 +154,7 @@ export const FakeMenuButton = ({ hiddenProp, child, clickhandler }: FakeMenuProp
             )}>
             {child}
 
-        </button>
+        </div>
 
     )
 }

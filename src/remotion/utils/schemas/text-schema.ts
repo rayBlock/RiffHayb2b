@@ -7,6 +7,6 @@ export const Text = z.object({
 	linearBG: z.boolean().optional(),
 	linearDegBG: z.number().optional(),
 	fs: z.number().optional().default(22),
-	color: z.string().optional(),
+	color: z.string().optional().default('#ffffff'),
 	rotate: z.number().optional(),
 });

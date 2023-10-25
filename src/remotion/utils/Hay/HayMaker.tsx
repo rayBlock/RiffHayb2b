@@ -72,6 +72,8 @@ export function hayMaker({ duration }: { duration: number }) {
 
 					const uID = nanoid(5)
 					Object.entries(jsonSchema.properties).forEach(([key, prop]) => {
+						// console.log(key, prop, "key prop..");
+
 						switch (prop.description) {
 							case 'color':
 								groupedProps?.colors?.push({ [key]: prop.default }); // Set default color value becauses used
@@ -89,13 +91,29 @@ export function hayMaker({ duration }: { duration: number }) {
 								defaultValues[key] = []; // Set default icon value...
 								break;
 							case 'short':
-								groupedProps.short?.push({ [key]: '' });
+							
+								// const propertiesObject:any = prop
+								// for (const propName in propertiesObject) {
+								// 	if (propertiesObject.hasOwnProperty(propName)) {
+								// 		const property = propertiesObject[propName];
+								// 		console.log(property, "property... riffweaver");
+
+								// 		if (property.hasOwnProperty('default')) {
+								// 			const defaultValue = property.default;
+								// 			// Assign the extracted property to the corresponding key
+								// 			keys[keyName][propName] = defaultValue;
+								// 		}
+								// 	}
+								// }
+
+								groupedProps.short?.push({ [key]: '', prop });
 								inputProps.texts.short.push({ propName: key, id: uID });
 								inputProps.texts.all.push({ propName: key, id: uID });
+								console.log(key, "&", prop)
 
 								break;
 							case 'mid':
-								groupedProps.mid?.push({ [key]: '' });
+								groupedProps.mid?.push({ [key]: '', prop });
 								inputProps.texts.mid.push({ propName: key, id: uID });
 								inputProps.texts.all.push({ propName: key, id: uID });
 								break;
@@ -105,7 +123,11 @@ export function hayMaker({ duration }: { duration: number }) {
 							default:
 								defaultValues[key] = prop.default; // Set other default values
 						}
+						console.log(groupedProps, "grouped props");
+
 					});
+					console.log(groupedProps, "grouped props");
+
 					return {
 						...defaultValues,
 						uID,
@@ -128,7 +150,7 @@ export function hayMaker({ duration }: { duration: number }) {
 
 	// Your array of CompConfig objects
 	const compConfigsArray: CompConfig<{}>[] = remotionRiffsPick;
-	
+
 	// Call the function to get the merged inputProps
 	const mergedInputProps = mergeInputProps(compConfigsArray, inputProps);
 
