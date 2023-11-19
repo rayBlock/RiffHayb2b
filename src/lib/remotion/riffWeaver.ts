@@ -235,14 +235,14 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 							case 'short':
 								// keys[keyName].text = llmSchemaData?.output.shortS[shortIndex] ;
 								keys[keyName] = { text: llmSchemaData?.output.shortS[shortIndex] };
-								console.log(keys, "<-- keys")
+								console.log(keys, "<-- keys short")
 
 								shortIndex++;
 								break;
 							case 'mid':
 								// keys[keyName].text =  llmSchemaData?.output.midS[midIndex];
 							 	keys[keyName] = { text: llmSchemaData?.output.midS[midIndex] };
-										console.log(keys)
+										console.log(keys, "<.. keys mid")
 								midIndex++;
 								break;
 							// case 'long':
@@ -325,8 +325,6 @@ export async function riffWeaver({ prompt, duration, orientation }: weaverProps)
 			const nanoID = nanoid(4);
 			transformedData.push({
 				duration: 20,
-				//TODO what ?.. hmmm ...
-
 				id: nanoID,
 				comp: prepInputs.traversePick![index],
 				props: { ...transitProps },

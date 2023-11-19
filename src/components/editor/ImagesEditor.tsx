@@ -1,8 +1,7 @@
-
 import clsx from "clsx";
 import { useEffect, useRef, useState, type Dispatch } from "react";
 import type { PositionDataActionTypes, PositionDataObject, UpdateItemPositionAction } from "../utils/positionReducer";
-import type { MainDataActionTypes, MainDataObject, UpdateItemAction } from "../utils/propsReducer";
+import type { MainDataActionTypes, MainDataObject, } from "../utils/propsReducer";
 import { getValueForIdAndPropName } from "../utils/inputValueExtraction";
 
 interface ColorBarProps {
@@ -24,7 +23,7 @@ interface ColorBarProps {
 
 
 
-export const ImagesEditor = ({ positionData, propsState, positionAction, propsActions, currentRiff, mainWindow }: ColorBarProps) => {
+export const ImagesEditor = ({ positionData, propsState, positionAction, currentRiff }: ColorBarProps) => {
 
 
 
@@ -151,17 +150,17 @@ export const ImagesEditor = ({ positionData, propsState, positionAction, propsAc
     };
   }, [isModalOpen]);
 
-  const updateItemProperty = (id: string, propName: string, value: any) => {
-    const action: UpdateItemAction = {
-      type: 'UPDATE_ITEM',
-      payload: {
-        id,
-        propName,
-        value,
-      },
-    };
-    propsActions(action);
-  };
+  // const updateItemProperty = (id: string, propName: string, value: any) => {
+  //   const action: UpdateItemAction = {
+  //     type: 'UPDATE_ITEM',
+  //     payload: {
+  //       id,
+  //       propName,
+  //       value,
+  //     },
+  //   };
+  //   propsActions(action);
+  // };
 
   const handleModal = (props: any) => {
     console.log(props, "image modal props");

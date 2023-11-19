@@ -18,7 +18,7 @@ import { SideBar } from '../editor/SideBar';
 import { PlayButton } from '../editor/PlayButton';
 import { propsReducer, type MainDataObject, type MainDataActionTypes, type UpdatePlayerDimension, type playerDimensions } from '../utils/propsReducer';
 import { ColorsEditor } from '../editor/ColorsEditor';
-import { menu }from '../editor/Menu';
+import { menu } from '../editor/Menu';
 import { useCurrentPlayerFrame } from '../utils/use-current-frame';
 import { useCurrentRiff } from '../utils/use-current-riff';
 import { positionReducer, type PositionDataObject, type PositionDataActionTypes, type UpdateOrientationAction } from '../utils/positionReducer';
@@ -26,7 +26,7 @@ import { ImagesEditor } from '../editor/ImagesEditor';
 import { TextEditor } from '../editor/TextEditor';
 import { BuilderLayout } from './BuilderLayout';
 import clsx from 'clsx';
-import { usePositionHandler } from '../utils/usePositionHandler';
+// import { usePositionHandler } from '../utils/usePositionHandler';
 import { TextEditorBase } from '../editor/TextEditorBase';
 
 // import type { PromptPrivacyLevel } from '../../lib/trpc/routers/prompts';
@@ -131,23 +131,26 @@ export function Riff() {
 	const frame = useCurrentPlayerFrame(playerRef);
 
 	const riffsTime = useCurrentRiff(adjustedData, frame)
-	
+
 
 
 	const mainWindowRef = useRef<HTMLDivElement | null>(null);
+	const playerWrapperRef = useRef<HTMLDivElement | null>(null);
+
 	// console.log(mainWindowRef.current?.clientWidth);
-	
+
 	const mainWindowWidth: number | undefined = mainWindowRef.current?.clientWidth
+	const playerWrapperWidth = playerWrapperRef.current?.clientWidth;
 
 	// TODO init x & y with correct numbrs depending on window size ?
 	// console.log(data, "data ?")
 	const duration = parseInt(initialDuration);
 
 	const initialReducerData = { data, propsDock, duration, orientation, playerHeight: dimHeight, playerWidth: dimWidth }
-	const initialPositionData = { orientation, menu }
+	const initialPositionData = { orientation, menu, playing: playerRef.current?.isPlaying() ? playerRef.current?.isPlaying() : true }
 
 	const [redPropsState, redPropsActions]: [MainDataObject, Dispatch<MainDataActionTypes>] = useReducer(propsReducer, initialReducerData as any);
-	
+
 	const [positionState, positionActions]: [PositionDataObject, Dispatch<PositionDataActionTypes>] = useReducer(positionReducer, initialPositionData);
 	// console.log(positionState);
 
@@ -269,41 +272,48 @@ export function Riff() {
 				</div>
 
 
-				<SideBar playerRef={playerRef} propsData={positionState} propsAction={positionActions} />
+				<SideBar playerRef={playerRef} positionData={positionState} positionAction={positionActions} />
 				<ImagesEditor currentRiff={riffsTime} mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} positionData={positionState} positionAction={positionActions} />
-				<TextEditor currentRiff={riffsTime} mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} positionData={positionState} positionAction={positionActions} />
+				<TextEditor playerWidth={playerWrapperWidth} playerRef={playerRef} orientation={ori} currentRiff={riffsTime} mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} positionData={positionState} positionAction={positionActions} />
 				<ColorsEditor currentRiff={riffsTime} mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} positionData={positionState} positionAction={positionActions} />
-				<div className='flex justify-center  gap-4 sm:pt-4'>
-					<Player
-						ref={playerRef}
-						component={RiffGarden}
-						inputProps={redPropsState as any}
-						durationInFrames={playerDuration}
-						fps={30}
-						compositionHeight={redPropsState.playerHeight || 720}
-						compositionWidth={redPropsState.playerWidth || 720}
-						style={{ width: playerStyle }}
-						autoPlay
-						loop
-					// controls
-					/>
+				<div  className='flex justify-center  gap-4 sm:pt-4'>
+					<div ref={playerWrapperRef}>
+
+						<Player
+							ref={playerRef}
+							component={RiffGarden}
+							inputProps={redPropsState as any}
+							durationInFrames={playerDuration}
+							fps={30}
+							compositionHeight={redPropsState.playerHeight || 720}
+							compositionWidth={redPropsState.playerWidth || 720}
+							style={{ width: playerStyle }}
+							autoPlay
+							loop
+						// controls
+						/>
+					</div>
 
 					{/* <div className='w-1/2 text-right'>{JSON.stringify(data?.riff.inputs)}</div> */}
 				</div>
 				<PlayButton
+					positionData={positionState}
+					positionAction={positionActions}
 					yPosition={20}
+					// scale also used in Playbuttin spacebar key compare
 					scale="scale-125"
 					playerRef={playerRef}
 					hiddenProp="lg:flex hidden"
+					widthProp={"w-36 h-12"}
 				//  playing={true}
 				/>
-				<div className='flex justify-center items-center'>
-					<RifferTimeLine tlWidth={timeLineWidth} mainWindow={mainWindowWidth} riffsTime={riffsTime} totalFrames={playerDuration} playerRef={playerRef} inputs={inputs as any} />
+				<div className='flex justify-center items-center mb-6'>
+					<RifferTimeLine tlWidth={timeLineWidth} orientation={orientation} mainWindow={mainWindowWidth} riffsTime={riffsTime} totalFrames={playerDuration} playerRef={playerRef} inputs={inputs as any} />
 				</div>
 				{/* <div className='pt-4 border border-black mt-2 h-[333px] z-0 px-4 mx-4'>hello 
 					?from the riff section itself
 				</div> */}
-				<TextEditorBase currentRiff={riffsTime} mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} />
+				<TextEditorBase orientation={ori} playerRef={playerRef} positionAction={positionActions} positionData={positionState} currentRiff={riffsTime} mainWindow={mainWindowWidth} propsState={redPropsState} propsActions={redPropsActions} />
 			</main>
 		</BuilderLayout>
 

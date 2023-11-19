@@ -1,14 +1,40 @@
+import type { PlayerRef } from "@remotion/player";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type RefObject, type Dispatch } from "react";
+import type { PositionDataObject, PositionDataActionTypes, UpdatePlayingAction } from "../utils/positionReducer";
+import type { MainDataObject, MainDataActionTypes } from "../utils/propsReducer";
 
+interface playBtn {
+    positionData: PositionDataObject
+    positionAction: Dispatch<PositionDataActionTypes>
+    propsState?: MainDataObject
+    propsActions?: Dispatch<MainDataActionTypes>
+    playerRef: RefObject<PlayerRef>
+    yPosition?:any
+    hiddenProp?:any
+    scale:string
+    widthProp?:any
 
-export const PlayButton = ({ playerRef, yPosition, hiddenProp, scale }: any) => {
-    const [playing, setStatePlaying] = useState<boolean>(true);
+}
+export const PlayButton = ({
+    positionData,positionAction, 
+    playerRef, yPosition, hiddenProp, scale, widthProp }: playBtn) => {
+        
     const [spaceModeTime, setSpaceModeTime] = useState<any>(null);
+
+    const updateRedSelect = (value: boolean) => {
+        const action: UpdatePlayingAction = {
+          type: 'UPDATE_PLAYING',
+          payload: {
+            value,
+          },
+        };
+        positionAction(action);
+      }
 
 
     function spaceHandler({ key }: { key: string }) {
-
+     
         const windowInnerWidth = window.innerWidth;
 
         
@@ -29,15 +55,15 @@ export const PlayButton = ({ playerRef, yPosition, hiddenProp, scale }: any) => 
         return () => {
             window.removeEventListener("keydown", spaceHandler);
         };
-    }, []);
+    }, []);                                                             
 
     function turn_play() {
         const currentTime = Date.now();
-
+        
         if (spaceModeTime === null || currentTime - spaceModeTime > 200) {
             let playCondition = playerRef.current?.isPlaying();
             playCondition ? playerRef.current?.pause() : playerRef.current?.play()
-            setStatePlaying(!playCondition)
+            updateRedSelect(!playCondition)
         }
         setSpaceModeTime(currentTime)
 
@@ -48,10 +74,10 @@ export const PlayButton = ({ playerRef, yPosition, hiddenProp, scale }: any) => 
             className={clsx(hiddenProp, "  justify-center items-center")}>
             <button
                 onClick={turn_play}
-                aria-label={playing ? 'Pause' : 'Play'}
-                className=" w-36 h-12"
+                aria-label={positionData.playing ? 'Pause' : 'Play'}
+                className={"w-36 h-12"}
             >
-                {playing ?
+                {positionData.playing ?
                     // Pause
                     <div className={clsx(scale, '')}>
 

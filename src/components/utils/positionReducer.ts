@@ -4,6 +4,7 @@ import type { playerDimensions } from './propsReducer';
 const UPDATE_ITEM_POSITION = 'UPDATE_ITEM_POSITION'; // You can use your custom action type
 const UPDATE_MENU = 'UPDATE_MENU'; // You can use your custom action type
 const UPDATE_ORIENTATION = 'UPDATE_ORIENTATION'; // You can use your custom action type
+const UPDATE_PLAYING = 'UPDATE_PLAYING'; // You can use your custom action type
 
 export interface UpdateItemPositionAction {
 	type: typeof UPDATE_ITEM_POSITION;
@@ -29,14 +30,23 @@ export interface UpdateOrientationAction {
 		value: playerDimensions;
 	};
 }
+
+export interface UpdatePlayingAction {
+	type: typeof UPDATE_PLAYING;
+	payload: {
+		value: boolean;
+	};
+}
 export type PositionDataActionTypes =
 	| UpdateItemPositionAction
 	| UpdateMenuAction
-	| UpdateOrientationAction;
+	| UpdateOrientationAction
+	| UpdatePlayingAction;
 
 // Define the state type
 export interface PositionDataObject {
 	orientation: playerDimensions;
+	playing?: boolean
 	menu: {
 		colors: boolean;
 		colorsX: number;
@@ -83,7 +93,11 @@ export const positionReducer = (
 				...state,
 				orientation: action.payload.value,
 			};
-
+			case UPDATE_PLAYING:
+				return {
+					...state,
+					playing: action.payload.value,
+				};
 		default:
 			return state;
 	}

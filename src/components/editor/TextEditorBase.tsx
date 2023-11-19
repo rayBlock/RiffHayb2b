@@ -1,15 +1,22 @@
 
 import clsx from "clsx";
-import { useRef, useState, type Dispatch } from "react";
-import type { PositionDataActionTypes, PositionDataObject } from "../utils/positionReducer";
+import { useRef, useState, type Dispatch, type RefObject } from "react";
+import type { PositionDataActionTypes, PositionDataObject, } from "../utils/positionReducer";
 import type { MainDataActionTypes, MainDataObject, UpdateTextItemAction } from "../utils/propsReducer";
 import { getValueForIdAndPropName } from "../utils/inputValueExtraction";
+import { TextPropsModal } from "./TextPropsModal";
+import type { PlayerRef } from "@remotion/player";
 
-interface ColorBarProps {
+interface TextBasedBarProps {
+  positionData: PositionDataObject
+  positionAction: Dispatch<PositionDataActionTypes>
   mainWindow: number | undefined
   propsState: MainDataObject
   propsActions: Dispatch<MainDataActionTypes>
   currentRiff: any
+  playerRef: RefObject<PlayerRef>
+  orientation: string
+
 }
 
 // const focus = (el: Element | undefined | null) => {
@@ -28,17 +35,19 @@ interface ColorBarProps {
 
 
 
-export const TextEditorBase = ({ propsState, propsActions, currentRiff }: ColorBarProps) => {
+export const TextEditorBase = ({orientation, propsState, propsActions, playerRef, currentRiff, positionData, positionAction }: TextBasedBarProps) => {
   const modalRef = useRef<HTMLDivElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const focusRef = useRef<Element | null>(null);
-  const buttonScaleRef = useRef<HTMLButtonElement | null>(null);
+
+  const [selectedText, setSelectedText] = useState();
+
+  const divRef = useRef<HTMLDivElement | null>(null);
+  const innerModalRef = useRef<HTMLDivElement | null>(null);
 
   const updatedTexts = propsState.propsDock.texts.all.map((textItem) => {
     const value = getValueForIdAndPropName(propsState.data, textItem.id, textItem.propName);
     return { ...textItem, value };
   });
-
 
   const updateTextColorItemProperty = (id: string, propName: string, textProp: string, value: any) => {
     const action: UpdateTextItemAction = {
@@ -55,69 +64,80 @@ export const TextEditorBase = ({ propsState, propsActions, currentRiff }: ColorB
 
   const handleModal = (textItem: any) => {
 
-    const buttonIndex = updatedTexts.findIndex((item) => item === textItem);
-    const buttonId = `button-${buttonIndex}`;
-    const buttonElement = document.getElementById(buttonId);
+    // const buttonIndex = updatedTexts.findIndex((item) => item === textItem);
+    // const buttonId = `button-${buttonIndex}`;
+    // const buttonElement = document.getElementById(buttonId);
     // console.log(buttonElement?.offsetTop, "button eeeleeem")
-    // if (divRef.current) {
-    //   divRef.current.scroll({ behavior: 'smooth', top: 0 });
-    // }
-  
+    if (divRef.current) {
+      divRef.current.scroll({ behavior: 'smooth', top: 0 });
+    }
+    setSelectedText(textItem)
     setIsModalOpen(!isModalOpen)
-
+    
   }
 
 
+  const positionedShow = positionData.menu.texts && orientation === "Landscape" || orientation === "Square" ? "block" : positionData.menu.texts ?  'xl:hidden block ' : 'hidden';
+  //  const colorsShown = positionData.menu.texts ? "block" : 'hidden'
+  const heightEditorPortrait = orientation === "Portrait" ? "max-h-[255px] lg:h-[225px] " : "";
+  const heightEditorSquare = orientation === "Square" ? "max-h-[325px] lg:h-[250px] " : "";
+  const heightEditorLandscape = orientation === "Landscape" ? "max-h-[325px] lg:h-[250px]" : "";
+
+const innerWidth = innerModalRef.current ? innerModalRef.current?.clientWidth : 222;
 
   return (
     <div
-      className={clsx(" group w-full h-1/3 mt-4 relative  cursor-pointer")}
+    // TODO Heihgt adjustment depending on playerOrientation and mainWindow... 
+
+      className={clsx(positionedShow,
+         heightEditorPortrait,
+         heightEditorSquare,
+         heightEditorLandscape,
+         "group w-full  lg:absolute lg:bottom-6 relative justify-center flex cursor-pointer")}
     >
 
-      <div className={clsx("grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-1 auto-cols-max border-2 h-full  bg-[#d3e0f6] overflow-y-scroll rounded-tr-none  px-3 py-2 z-10 ")}>
+      <div ref={divRef} className={clsx(isModalOpen? "overflow-y-clip" : "overflow-y-scroll", "grid w-full h-full relative grid-cols-1 px-12 py-3 md:grid-cols-1 lg:grid-cols-1 auto-cols-max bg-[#d3e0f6]  rounded-tr-none z-10 ")}>
 
         {updatedTexts.map((textItem, index) => (
-          <div key={index} className="flex items-center gap-2 w-full">
+          <div key={index} className="flex items-center gap-6 w-full">
 
             <input value={textItem.value.color}
               onChange={(e) => updateTextColorItemProperty(textItem.id, textItem.propName, "color", e.target.value)}
-              className="justify-start min-w-8 w-8 cursor-pointer shadow-[1px_3px_0px_#000000] h-8" type="color" />
+              className="justify-start min-w-8 w-10 cursor-pointer shadow-[1px_3px_0px_#000000] h-10" type="color" />
             <button key={index}
               id={`button-${index}`}
-              className={clsx("z-0 w-full  py-2 px-2 my-2 rounded-2xl border-2 border-black rounded-tl-none hover:translate-y-1 hover:shadow-[1px_2px_0px_#000000] shadow-[1px_3px_0px_#000000]",
+              className={clsx("z-0 w-[90%] text-xl  py-3 px-2 my-2 rounded-2xl border-2 border-black rounded-tl-none hover:translate-y-1 hover:shadow-[1px_2px_0px_#000000] shadow-[1px_3px_0px_#000000]",
                 textItem.id === currentRiff.id ? `bg-green-200` : "bg-gray-100")}
               onClick={() => handleModal(textItem)}
             >{textItem.value.text}
             </button>
           </div>
-
         ))}
-
 
         <div
           ref={modalRef}
           onClick={() => setIsModalOpen(false)}
           className={clsx(
-            'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50',
+            'absolute inset-0  h-full z-50 flex items-center justify-center bg-black bg-opacity-50',
             isModalOpen ? 'flex' : 'hidden'
           )}
         >
           <div
-            className="mx-auto max-h-[90vh] max-w-lg flex flex-col overflow-auto rounded bg-white p-6 shadow-lg"
+          ref={innerModalRef}
+            className="mx-auto w-[95%] md:w-4/5 relative h-[85%] flex flex-col overflow-auto rounded bg-white p-2 shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex flex-col">
-
-
+            {/* <div className="flex flex-col">
 
               <div>
                 <label>Create an AI image</label>
                 <button className="rounded-lg bg-green-200 px-4 py-2 w-24 self-end text-black font-medium	" >submit</button>
               </div>
-            </div>
+            </div> */}
+            <TextPropsModal width={innerWidth} propsState={propsState} positionData={positionData} playerRef={playerRef} propsAction={propsActions} positionAction={positionAction} text={selectedText} />
             <button
               onClick={() => setIsModalOpen(false)}
-              className="rounded-lg bg-red-200 px-4 py-2 w-24 self-end text-black"
+              className="rounded-lg absolute bottom-2 bg-red-200 px-4 py-2 w-24 self-end text-black"
             >
               Close
             </button>

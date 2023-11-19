@@ -30,16 +30,16 @@ import { inputPropsSchema } from './config';
 
 export type AnfaProps = z.infer<typeof inputPropsSchema>;
 
-export function AnfaMotion({ img, color1, sText2, mText }: AnfaProps) {
+export function AnfaMotion({ img, sText2, mText }: AnfaProps) {
 	const frame = useCurrentFrame();
 	const { width, height, durationInFrames } = useVideoConfig();
-	// console.log(image1, "prosp")
 	const animation = interpolate(frame, [0, durationInFrames], [-100, 6750], {
 		extrapolateLeft: 'clamp',
 		extrapolateRight: 'clamp',
 		easing: Easing.ease,
 	});
 
+	// console.log(mText, "texter");
 	
 
 	const colorG = frame === 0 ? "red" : 
@@ -83,7 +83,6 @@ export function AnfaMotion({ img, color1, sText2, mText }: AnfaProps) {
 				props={{
 					text: mText?.text ,
 					y: animation  -200,
-					lineHeight: mText?.fs! + 5,
 					shadow: 3,
 					shadowColor: 'black',
 					width: width * 0.8,

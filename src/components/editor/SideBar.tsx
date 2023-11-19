@@ -13,43 +13,25 @@ import { PlayButton } from "./PlayButton";
 import type { PlayerRef } from "@remotion/player";
 
 interface SidebarProps {
-    propsData: PositionDataObject
-    propsAction: Dispatch<PositionDataActionTypes>
+    positionData: PositionDataObject
+    positionAction: Dispatch<PositionDataActionTypes>
     playerRef: RefObject<PlayerRef>
 }
 
 type MenuProps = {
     child: any
-    propsData: PositionDataObject
-    propsAction: Dispatch<UpdateMenuAction>
+    positionData: PositionDataObject
+    positionAction: Dispatch<UpdateMenuAction>
     menuArg: menuPropNames
     hiddenProp?: string
 }
-type FakeMenuProps = {
-    child: any
-    hiddenProp?: string
-    clickhandler?: () => void
-}
+// type FakeMenuProps = {
+//     child: any
+//     hiddenProp?: string
+//     clickhandler?: () => void
+// }
 
-
-/*
-  what window size are we dealing with ?  -- mainWindow
-  what space is available ?  -- mainwindow & orentation
-  are there any others already open ? -- position reducer state
-  check if current placement is not 0 ... for stored template from user ??
-  set to open and assign placement with x and y 
-
-
-  I want to show the props editor panels at the correct place with correct UI
-  UI: width, height ?  more fine grained based on the platzbeschrenkungen
-
-  arrange better when other panel gets activaed ?
-
-
-
-*/
-
-export const PropMenuButton = ({ hiddenProp, child, propsData, menuArg, propsAction }: MenuProps) => {
+export const PropMenuButton = ({ hiddenProp, child, positionData, menuArg, positionAction }: MenuProps) => {
 
     const updateMenuProperty = (name: menuPropNames,) => {
 
@@ -61,10 +43,9 @@ export const PropMenuButton = ({ hiddenProp, child, propsData, menuArg, propsAct
                 name
             },
         };
-        propsAction(action);
-        console.log(propsData, "propsdata in button");
+        positionAction(action);
     };
-    const menuClass = propsData.menu[menuArg] as any ? 'bg-green-200 ' : '';
+    const menuClass = positionData.menu[menuArg] as any ? 'bg-green-200 ' : '';
 
     return (
         // selectable for ADA ?  with button but space bar issues... 
@@ -85,52 +66,24 @@ export const PropMenuButton = ({ hiddenProp, child, propsData, menuArg, propsAct
 
 
 
-export const SideBar = ({ playerRef, propsData, propsAction }: SidebarProps) => {
-    //   console.log(riffData, "data in sidebarr")
-    // const { inputs, data } = riffData.riff.inputs;
-    // console.log(data, "<-- data individual Riff-E data in sidebar")
-
+export const SideBar = ({ playerRef, positionData, positionAction }: SidebarProps) => {
     const iconH = 36
     const iconW = iconH
-
-
-    // const updateItemProperty = (id: string, propName: string, value: any) => {
-    //     const action: UpdateItemAction = {
-    //         type: 'UPDATE_ITEM',
-    //         payload: {
-    //             id,
-    //             propName,
-    //             value,
-    //         },
-    //     };
-    //     propsAction(action);
-    // };
-
 
     return (
         <div className="absolute bottom bottom-0 lg:bottom-full z-20 px-2 w-full lg:w-auto pb-4 lg:pb-0 lg:top-1/2 sm:px-4 flex lg:flex-col gap-3">
 
 
-            <PropMenuButton menuArg="colors" propsData={propsData} propsAction={propsAction} child={<ColorPalette iconH={iconH} iconW={iconW} />} />
-            <PropMenuButton menuArg="images" propsData={propsData} propsAction={propsAction} child={<ImageIcon iconH={iconH} iconW={iconW} />} />
-            <PropMenuButton menuArg="texts" propsData={propsData} propsAction={propsAction} child={<TextIcon iconH={iconH} iconW={iconW} />} />
+            <PropMenuButton menuArg="colors" positionData={positionData} positionAction={positionAction} child={<ColorPalette iconH={iconH} iconW={iconW} />} />
+            <PropMenuButton menuArg="images" positionData={positionData} positionAction={positionAction} child={<ImageIcon iconH={iconH} iconW={iconW} />} />
+            <PropMenuButton menuArg="texts" positionData={positionData} positionAction={positionAction} child={<TextIcon iconH={iconH} iconW={iconW} />} />
                     <PlayButton 
+                    widthProp={" h-12 justify-center"}
+                    positionData={positionData} positionAction={positionAction}
                     hiddenProp="lg:hidden group rounded-tl-none border-2 border-black
                       p-1 cursor-pointer w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center "
+                      // scale exact string also used in playButton 
                      scale="scale-90" playerRef={playerRef} />
-            
-                    {/* Play Button shenanigans because of showing it in 2 places  */}
-            {/* <FakeMenuButton hiddenProp="flex md:hidden" child={
-                
-                } /> */}
-            {/* <PropMenuButton menuArg="none" propsData={propsData} propsAction={propsAction} child={<VideoIcon iconH={iconH} iconW={iconW} />} />
-                
-            
-            
-            <PropMenuButton hiddenProp="flex md:hidden" menuArg="none" propsData={propsData} propsAction={propsAction} child={<PlayButton scale="scale-100" playerRef={playerRef} />} /> */}
-
-
-            {/* <PlayButton playerRef={playerRef} scale="scale-100 rounded-tl-none border-2 border-black  cursor-pointer shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center " turnPlay={""} playing={true} /> */}
 
 
         </div>
@@ -141,20 +94,20 @@ export const SideBar = ({ playerRef, propsData, propsAction }: SidebarProps) => 
 
 
 
-export const FakeMenuButton = ({ hiddenProp, child, clickhandler }: FakeMenuProps) => {
+// export const FakeMenuButton = ({ hiddenProp, child, clickhandler }: FakeMenuProps) => {
 
-    return (
-        // selectable for ADA ?  with button but space bar issues... 
-        <div style={{ borderTopLeftRadius: '0px', border: '2px solid black' }}
+//     return (
+//         // selectable for ADA ?  with button but space bar issues... 
+//         <div style={{ borderTopLeftRadius: '0px', border: '2px solid black' }}
 
-            className={clsx(
-                hiddenProp,
-                `group  p-1 cursor-pointer w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center `
+//             className={clsx(
+//                 hiddenProp,
+//                 `group  p-1 cursor-pointer w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center `
 
-            )}>
-            {child}
+//             )}>
+//             {child}
 
-        </div>
+//         </div>
 
-    )
-}
+//     )
+// }

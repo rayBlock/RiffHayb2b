@@ -4,16 +4,30 @@ import { cn } from '../../../lib/utils';
 
 export type TextArgs = {
 	text: any;
+	opa?: number;
 	maxWidth?: number;
-	linearBG?: boolean;
-	linearDegBG?: number;
-	colorBG?: React.CSSProperties['color'];
-	colorBG2?: React.CSSProperties['color'];
+	bgLinear?: boolean;
+	bgLinearDeg?: number;
+	bg?: React.CSSProperties['color'];
+	bg2?: React.CSSProperties['color'];
 	width?: number;
 	paddingT?: React.CSSProperties['padding'];
 	paddingR?: React.CSSProperties['padding'];
 	paddingB?: React.CSSProperties['padding'];
 	paddingL?: React.CSSProperties['padding'];
+	borderAdvanced?: boolean;
+	borderTcolor?: React.CSSProperties['color'];
+	borderRcolor?: React.CSSProperties['color'];
+	borderBcolor?: React.CSSProperties['color'];
+	borderLcolor?: React.CSSProperties['color'];
+	borderTW?: number;
+	borderRW?: number;
+	borderBW?: number;
+	borderLW?: number;
+	borderRadiusTR?: number;
+	borderRadiusTL?: number;
+	borderRadiusBR?: number;
+	borderRadiusBL?: number;
 	borderW?: React.CSSProperties['borderWidth'];
 	borderStyle?: React.CSSProperties['borderStyle'];
 	borderColor?: React.CSSProperties['borderColor'];
@@ -32,7 +46,7 @@ export type TextArgs = {
 	skewY?: number;
 	fontW?: React.CSSProperties['fontWeight'];
 	fontFamily?: React.CSSProperties['fontFamily'];
-	italic?: React.CSSProperties['fontStyle'];
+	fontStyle?: React.CSSProperties['fontStyle'];
 	shadowOffsetX?: number;
 	shadowOffsetY?: number;
 	shadow?: number;
@@ -53,21 +67,35 @@ export interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
 
 const defaultProps: TextArgs = {
 	text: '',
-	linearBG: false,
-	linearDegBG: 0,
-	colorBG: 'transparent',
-	colorBG2: 'transparent',
+	opa: 1,
+	bgLinear: false,
+	bgLinearDeg: 0,
+	bg: 'transparent',
+	bg2: 'transparent',
 	width: 720,
 	paddingT: 0,
 	paddingR: 0,
 	paddingB: 0,
 	paddingL: 0,
+	borderAdvanced: false,
 	borderW: 0,
 	borderStyle: 'none',
 	borderColor: 'black',
+	borderTcolor: 'black',
+	borderRcolor: 'black',
+	borderBcolor: 'black',
+	borderLcolor: 'black',
+	borderTW: 1,
+	borderRW: 1,
+	borderBW: 1,
+	borderLW: 1,
 	borderRadius: 0,
+	borderRadiusTR: 0,
+	borderRadiusTL: 0,
+	borderRadiusBR: 0,
+	borderRadiusBL: 0,
 	fs: 55,
-	lineHeight: 60,
+	lineHeight: 55,
 	color: 'white',
 	stroke: 0,
 	strokeColor: 'black',
@@ -80,7 +108,7 @@ const defaultProps: TextArgs = {
 	skewY: 0,
 	fontW: 600,
 	fontFamily: 'Roboto',
-	italic: '',
+	fontStyle: '',
 	shadowOffsetX: 0,
 	shadowOffsetY: 0,
 	shadow: 0,
@@ -91,7 +119,7 @@ const defaultProps: TextArgs = {
 	decorationW: 0,
 	transform: 'none',
 	transformer: '',
-	
+
 };
 
 export const Text_A: React.FC<TextProps> = ({
@@ -100,21 +128,42 @@ export const Text_A: React.FC<TextProps> = ({
 	props,
 	// translateX(${banners1Appear}px) translateX(${banners1Disappear}px)
 }) => {
+	//  console.log(props, "props in text");
+
 	const mergedProps = Object.assign({}, defaultProps, props); // Merge default props with provided props
 	const [selected, setSelected] = useState(false);
+	console.log(mergedProps, "merged in Text");
+
 	return (
 		<p
 			onClick={() => (setSelected(!selected), console.log(selected, 'select'))}
 			style={{
-				background: mergedProps.linearBG
-					? `linear-gradient(${mergedProps.linearDegBG}deg, ${mergedProps.colorBG}, ${mergedProps.colorBG2})`
-					: mergedProps.colorBG,
+				background: mergedProps.bgLinear
+					? `linear-gradient(${mergedProps.bgLinearDeg}deg, ${mergedProps.bg}, ${mergedProps.bg2})`
+					: mergedProps.bg,
 				//adjust width for user width: `100px`,
 				maxWidth: `${mergedProps.width}px`,
 				padding: `${mergedProps.paddingT}px ${mergedProps.paddingR}px ${mergedProps.paddingB}px ${mergedProps.paddingL}px`,
+
+
+
 				border: `${mergedProps.borderW}px ${mergedProps.borderStyle} ${mergedProps.borderColor}`,
 
+				borderTopColor: mergedProps.borderAdvanced ? `${mergedProps.borderTcolor}`
+					: mergedProps.borderColor,
+				borderRightColor: mergedProps.borderAdvanced ? `${mergedProps.borderRcolor}`
+					: mergedProps.borderColor,
+				borderBottomColor: mergedProps.borderAdvanced ? `${mergedProps.borderBcolor}`
+					: mergedProps.borderColor,
+				borderLeftColor: mergedProps.borderAdvanced ? `${mergedProps.borderLcolor}`
+					: mergedProps.borderColor,
+
+
+
+
 				borderRadius: `${mergedProps.borderRadius}px`,
+				borderTopLeftRadius: `${mergedProps.borderRadiusTL}`,
+
 				fontSize: `${mergedProps.fs}px`,
 				color: mergedProps.color,
 				WebkitTextStrokeWidth: `${mergedProps.stroke}px`,
@@ -127,13 +176,14 @@ export const Text_A: React.FC<TextProps> = ({
                             `,
 				fontWeight: mergedProps.fontW,
 				fontFamily: mergedProps.fontFamily,
-				fontStyle: mergedProps.italic,
+				fontStyle: mergedProps.fontStyle,
 				textShadow: `${mergedProps.shadowOffsetX}px ${mergedProps.shadowOffsetY}px ${mergedProps.shadow}px ${mergedProps.shadowColor}`,
 				textDecoration: `${mergedProps.decorationColor} ${mergedProps.decorationStyle} ${mergedProps.decorationLine}`,
 				textDecorationThickness: `${mergedProps.decorationW}px`,
-				 lineHeight:  ` ${mergedProps.lineHeight }px`,
+				lineHeight: ` ${mergedProps.fs}px`,
 				textTransform: mergedProps.transform,
-				paintOrder: "stroke fill"
+				paintOrder: "stroke fill",
+				opacity: `${mergedProps.opa}`
 			}}
 			className={cn('m-0 cursor-pointer absolute ', className)}
 		>

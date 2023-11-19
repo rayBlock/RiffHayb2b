@@ -1,12 +1,3 @@
-import type { init } from "satori";
-import type { playerDimensions } from "../utils/propsReducer";
-
-type initMenuT = {
-    mainWindow: number | undefined;
-    orientation: playerDimensions;
-
-}
-
 
   export const menu: menu = {
         colors: false,
@@ -22,8 +13,6 @@ type initMenuT = {
         textsX: 0,
         textsY: 0
     }
-
-
 
 
 export type menu = {

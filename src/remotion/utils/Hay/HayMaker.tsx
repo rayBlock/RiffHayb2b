@@ -92,20 +92,6 @@ export function hayMaker({ duration }: { duration: number }) {
 								break;
 							case 'short':
 							
-								// const propertiesObject:any = prop
-								// for (const propName in propertiesObject) {
-								// 	if (propertiesObject.hasOwnProperty(propName)) {
-								// 		const property = propertiesObject[propName];
-								// 		console.log(property, "property... riffweaver");
-
-								// 		if (property.hasOwnProperty('default')) {
-								// 			const defaultValue = property.default;
-								// 			// Assign the extracted property to the corresponding key
-								// 			keys[keyName][propName] = defaultValue;
-								// 		}
-								// 	}
-								// }
-
 								groupedProps.short?.push({ [key]: '', prop });
 								inputProps.texts.short.push({ propName: key, id: uID });
 								inputProps.texts.all.push({ propName: key, id: uID });
@@ -123,10 +109,7 @@ export function hayMaker({ duration }: { duration: number }) {
 							default:
 								defaultValues[key] = prop.default; // Set other default values
 						}
-						console.log(groupedProps, "grouped props");
-
 					});
-					console.log(groupedProps, "grouped props");
 
 					return {
 						...defaultValues,
@@ -153,7 +136,8 @@ export function hayMaker({ duration }: { duration: number }) {
 
 	// Call the function to get the merged inputProps
 	const mergedInputProps = mergeInputProps(compConfigsArray, inputProps);
-
+	console.log(mergeInputProps, "merged props");
+	
 	const traversePick = traverDistribution(pickedRiffs?.length! - 1, 6);
 
 	return { mergedInputProps, pickedRiffs, traversePick, inputProps };

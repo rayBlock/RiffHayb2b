@@ -80,7 +80,7 @@ export const propsReducer = (
 		case UPDATE_ITEM:
 			// Find the item with a matching id
 			const updatedData = state.data.map((item) => {
-				if (item.id === action.payload.id) {
+				if (item.id === action.payload.id) {					
 					// Update the specific property within the props object
 					item.props[action.payload.propName] = action.payload.value;
 				}
