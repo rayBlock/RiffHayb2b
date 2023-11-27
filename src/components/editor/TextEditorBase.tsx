@@ -80,10 +80,11 @@ export const TextEditorBase = ({orientation, propsState, propsActions, playerRef
   const positionedShow = positionData.menu.texts && orientation === "Landscape" || orientation === "Square" ? "block" : positionData.menu.texts ?  'xl:hidden block ' : 'hidden';
   //  const colorsShown = positionData.menu.texts ? "block" : 'hidden'
   const heightEditorPortrait = orientation === "Portrait" ? "max-h-[255px] lg:h-[225px] " : "";
-  const heightEditorSquare = orientation === "Square" ? "max-h-[325px] lg:h-[250px] " : "";
+  const heightEditorSquare = orientation === "Square" ? "max-h-[325px] lg:h-[280px] " : "";
   const heightEditorLandscape = orientation === "Landscape" ? "max-h-[325px] lg:h-[250px]" : "";
 
-const innerWidth = innerModalRef.current ? innerModalRef.current?.clientWidth : 222;
+  // the inner section of the modal
+    const innerWidth = innerModalRef.current ? innerModalRef.current?.clientWidth  : 222;
 
   return (
     <div
@@ -93,20 +94,20 @@ const innerWidth = innerModalRef.current ? innerModalRef.current?.clientWidth : 
          heightEditorPortrait,
          heightEditorSquare,
          heightEditorLandscape,
-         "group w-full  lg:absolute lg:bottom-6 relative justify-center flex cursor-pointer")}
+         "group w-full lg:absolute lg:bottom-8 relative justify-center flex cursor-pointer")}
     >
 
       <div ref={divRef} className={clsx(isModalOpen? "overflow-y-clip" : "overflow-y-scroll", "grid w-full h-full relative grid-cols-1 px-12 py-3 md:grid-cols-1 lg:grid-cols-1 auto-cols-max bg-[#d3e0f6]  rounded-tr-none z-10 ")}>
 
         {updatedTexts.map((textItem, index) => (
-          <div key={index} className="flex items-center gap-6 w-full">
+          <div key={index} className="flex items-center gap-6 w-full px-12">
 
             <input value={textItem.value.color}
               onChange={(e) => updateTextColorItemProperty(textItem.id, textItem.propName, "color", e.target.value)}
               className="justify-start min-w-8 w-10 cursor-pointer shadow-[1px_3px_0px_#000000] h-10" type="color" />
             <button key={index}
               id={`button-${index}`}
-              className={clsx("z-0 w-[90%] text-xl  py-3 px-2 my-2 rounded-2xl border-2 border-black rounded-tl-none hover:translate-y-1 hover:shadow-[1px_2px_0px_#000000] shadow-[1px_3px_0px_#000000]",
+              className={clsx("z-0 w-full text-xl py-3 px-2 my-2 rounded-2xl border-2 border-black rounded-tl-none hover:translate-y-1 hover:shadow-[1px_2px_0px_#000000] shadow-[1px_3px_0px_#000000]",
                 textItem.id === currentRiff.id ? `bg-green-200` : "bg-gray-100")}
               onClick={() => handleModal(textItem)}
             >{textItem.value.text}
@@ -124,7 +125,7 @@ const innerWidth = innerModalRef.current ? innerModalRef.current?.clientWidth : 
         >
           <div
           ref={innerModalRef}
-            className="mx-auto w-[95%] md:w-4/5 relative h-[85%] flex flex-col overflow-auto rounded bg-white p-2 shadow-lg"
+            className="mx-auto w-[95%] md:w-4/5 relative h-[85%] flex flex-col overflow-y-scroll  rounded bg-white p-2 shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
             {/* <div className="flex flex-col">
@@ -135,13 +136,13 @@ const innerWidth = innerModalRef.current ? innerModalRef.current?.clientWidth : 
               </div>
             </div> */}
             <TextPropsModal width={innerWidth} propsState={propsState} positionData={positionData} playerRef={playerRef} propsAction={propsActions} positionAction={positionAction} text={selectedText} />
+          </div>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="rounded-lg absolute bottom-2 bg-red-200 px-4 py-2 w-24 self-end text-black"
+              className="rounded-lg right-2 absolute z-20 bottom-1 bg-red-200 px-4 py-2 w-24 self-end text-black"
             >
               Close
             </button>
-          </div>
         </div>
 
       </div>

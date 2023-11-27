@@ -210,18 +210,17 @@ const DraggableFramePointer: React.FC<DraggableDivProps> = ({ frame, orientation
       <div
         ref={divRef}
         style={{ left: `${progress}% ` }}
-        className={clsx('h-8 absolute z-10 w-10 sm:w-20 pb-0 -translate-y-7 lg:-translate-y-10 -ml-5 sm:-ml-10 lg:grid-cols-1 gap-2 grid-cols-1 grid justify-items-center cursor-pointer bg-black group ring-black ring-2 border-black rounded-full ')}
+        className={clsx('h-8 absolute  w-10 sm:w-20 pb-0 -translate-y-7 lg:-translate-y-10 -ml-5 sm:-ml-10 lg:grid-cols-1 gap-2 grid-cols-1 grid justify-items-center cursor-pointer bg-black group ring-black ring-2 border-black rounded-full ')}
       >
-        <div className="flex ">
-          <p className="h-8 z-0 select-none pt-[2px] group-hover:text-red-200  text-white ">
+        <div className="flex -z-20 ">
+          <p className="h-8 -z-30 select-none pt-[2px] group-hover:text-red-200  text-white ">
             {frame === 0 ? '0' : `${Math.floor(frame / 30) + 1}s`}
           </p>
 
           {totalFrames / 2 > frame ?
             <>
-              <div className="absolute xl:hidden  ml-7 sm:ml-12 mt-3 w-5 h-1 bg-black  " />
-
-              <p className="h-6 xl:hidden absolute  w-20 ml-12 sm:ml-16 pb-8 pt-1 px-4 rounded-xl text-center items-center self-center bg-black z-0 sm:h-6 place-self-center select-none group-hover:text-red-200  text-white ">
+              <div className="absolute xl:hidden ml-7 sm:ml-12 mt-3 w-5 h-1 bg-black  " />
+              <p className="h-8 xl:hidden absolute  w-16 ml-12 sm:ml-16 pb-8 pt-1 px-4 rounded-xl text-center items-center self-center bg-black z-0 sm:h-6 place-self-center select-none group-hover:text-red-200  text-white ">
                 {frame + 1}
               </p>
             </>
@@ -229,12 +228,10 @@ const DraggableFramePointer: React.FC<DraggableDivProps> = ({ frame, orientation
 
              
               <div className="relative ">
-
                 <div className=" xl:hidden absolute -ml-12 sm:-ml-16  mt-3 w-5 h-1 bg-black  " />
-
                 <p className=
                   {clsx(
-                    "h-6 w-16 xl:hidden absolute -ml-28 sm:-ml-32  pb-8 pt-1 px-4 rounded-xl text-center items-center self-center bg-black z-0 sm:h-6 place-self-center select-none group-hover:text-red-200  text-white "
+                    "h-6 w-16 -translate-y-0.5 xl:hidden absolute -ml-28 sm:-ml-32  pb-8 pt-1 px-4 rounded-xl text-center items-center self-center bg-black z-0 sm:h-6 place-self-center select-none group-hover:text-red-200  text-white "
                   )}
                 >
                   {frame + 1}

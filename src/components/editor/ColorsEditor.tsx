@@ -128,7 +128,7 @@ export const ColorsEditor = ({ positionData, propsState, positionAction, propsAc
       <div
         style={{ transform: `translate3d(${positionData.menu.colorsX}px, ${positionData.menu.colorsY}px, 0px)` }}
 
-        className={clsx(colorsShown, position, " absolute left- border-2  border-black shadow-[1px_4px_0px_#000000] bg-[#d3e0f6] p-4 rounded-3xl rounded-tr-none cursor-pointer z-10 grid grid-cols-6 gap-2")}
+        className={clsx(colorsShown, position, " absolute border-2  border-black shadow-[1px_4px_0px_#000000] bg-[#d3e0f6] p-4 rounded-3xl rounded-tr-none cursor-pointer z-10 grid grid-cols-6 gap-2")}
       // className={clsx(colorsShown, "target absolute border-2  border-black shadow-[1px_4px_0px_#000000] bg-[#d3e0f6] p-4 rounded-3xl rounded-tl-none cursor-pointer z-10 grid grid-cols-6 gap-2")}
 
       >{updatedColors.map((colorItem, index) => (

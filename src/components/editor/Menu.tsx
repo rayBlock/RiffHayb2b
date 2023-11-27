@@ -11,7 +11,8 @@
         videosY: 0,
         texts: false,
         textsX: 0,
-        textsY: 0
+        textsY: 0,
+        more:false,
     }
 
 
@@ -28,6 +29,7 @@ export type menu = {
     videos: boolean;
     videosX:number;
     videosY:number;
+    more:boolean
 };
 
 

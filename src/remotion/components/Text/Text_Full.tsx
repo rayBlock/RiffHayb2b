@@ -132,7 +132,7 @@ export const Text_A: React.FC<TextProps> = ({
 
 	const mergedProps = Object.assign({}, defaultProps, props); // Merge default props with provided props
 	const [selected, setSelected] = useState(false);
-	console.log(mergedProps, "merged in Text");
+	// console.log(mergedProps, "merged in Text");
 
 	return (
 		<p

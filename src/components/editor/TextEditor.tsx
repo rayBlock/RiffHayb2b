@@ -37,8 +37,12 @@ interface ColorBarProps {
 
 
 export const TextEditor = ({ orientation, positionData, propsState, playerRef, positionAction, propsActions, currentRiff, playerWidth, mainWindow }: ColorBarProps) => {
+console.log(playerWidth, "playerWidth in TextE");
+console.log(mainWindow, "mainWIndow,,,");
 
-  const pixelsAvailable = mainWindow && playerWidth ? (mainWindow - playerWidth) / 2 : playerWidth ? playerWidth : 300
+  const pixelsAvailable = mainWindow && playerWidth && playerWidth ? (mainWindow - playerWidth) / 2 : playerWidth ? playerWidth : 300
+  console.log(pixelsAvailable, "what the fuu");
+  
   const [isDragging, setIsDragging] = useState(false);
   const startXRef = useRef<number>(0);
   const startYRef = useRef<number>(0);
@@ -243,11 +247,11 @@ export const TextEditor = ({ orientation, positionData, propsState, playerRef, p
     setIsModalOpen(!isModalOpen)
 
   }
-  const colorsShown = positionData.menu.texts && orientation === "Landscape" || orientation === "Square" ? "hidden" : positionData.menu.texts ? 'hidden xl:block ' : 'hidden'
+  const Show = positionData.menu.texts && orientation === "Landscape" || orientation === "Square" ? "hidden" : positionData.menu.texts ? 'hidden xl:block ' : 'hidden'
 
-  console.log(pixelsAvailable, "pixels ");
   const editorWidth = pixelsAvailable - 50
-
+  console.log(editorWidth,"editorWidth" );
+  
   // figure out the minimum width possible ... 
   // change width & height with another draggable button...
 
@@ -255,7 +259,7 @@ export const TextEditor = ({ orientation, positionData, propsState, playerRef, p
 
   return (
     <div
-      className={clsx(colorsShown, "lg:top-16 lg:left-8", "absolute group  border-2  cursor-pointer")}
+      className={clsx(Show, "lg:top-16 lg:left-8 h-[40vh] absolute group  border-2  cursor-pointer")}
       style={{ width: `${editorWidth}px`, transform: `translate3d(${positionData.menu.textsX}px, ${positionData.menu.textsY}px, 0px)` }}
     >
 
@@ -299,13 +303,13 @@ export const TextEditor = ({ orientation, positionData, propsState, playerRef, p
           ref={modalRef}
           onClick={() => setIsModalOpen(false)}
           className={clsx(
-            'fixed rounded-3xl inset-0 rounded-tr-none z-50 flex items-center justify-center bg-black bg-opacity-50',
+            'fixed rounded-3xl inset-0 rounded-tr-none z-50 flex overflow-y-scroll items-center justify-center bg-black bg-opacity-50',
             isModalOpen ? 'flex' : 'hidden'
           )}
         >
           <div
             ref={innerModalRef}
-            className="mx-auto  flex relative flex-col overflow-auto rounded bg-white p-6 shadow-lg"
+            className=" flex p-3 overflow-y-scroll min-h-40 h-80 relative flex-col rounded bg-white shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
             {/* <div className="flex flex-col">
@@ -319,13 +323,13 @@ export const TextEditor = ({ orientation, positionData, propsState, playerRef, p
             </div> */}
             <TextPropsModal width={innerWidth} propsState={propsState} positionData={positionData} playerRef={playerRef} propsAction={propsActions} positionAction={positionAction} text={selectedText} />
 
+          </div>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="rounded-lg absolute bottom-2 bg-red-200 px-4 py-2 w-24 self-end text-black"
+              className="rounded-lg right-2 absolute bottom-5 hover:border-b-2 border-black z-50 bg-red-200 px-4 py-2 w-24 self-end text-black"
             >
               Close
             </button>
-          </div>
         </div>
 
       </div>

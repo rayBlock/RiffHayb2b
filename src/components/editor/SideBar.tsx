@@ -5,7 +5,9 @@ import clsx from "clsx";
 
 import { ImageIcon, TextIcon,
     // VideoIcon,
-     ColorPalette } from "./Icons/PropMenuItems";
+     ColorPalette, 
+     DotsSixVertical,
+     DotsSix2Vertical} from "./Icons/PropMenuItems";
 
 import type { Dispatch, RefObject } from "react";
 import type { PositionDataActionTypes, PositionDataObject, UpdateMenuAction, menuPropNames } from "../utils/positionReducer";
@@ -54,7 +56,7 @@ export const PropMenuButton = ({ hiddenProp, child, positionData, menuArg, posit
             className={clsx(
                 hiddenProp,
                 menuClass,
-                `group p-1 cursor-pointer z-30 w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center `
+                `group p-1 cursor-pointer bg-[#d3e0f6] w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center `
 
             )}>
             {child}
@@ -71,8 +73,9 @@ export const SideBar = ({ playerRef, positionData, positionAction }: SidebarProp
     const iconW = iconH
 
     return (
-        <div className="absolute bottom bottom-0 lg:bottom-full z-20 px-2 w-full lg:w-auto pb-4 lg:pb-0 lg:top-1/2 sm:px-4 flex lg:flex-col gap-3">
+        <div className="absolute bottom-0 lg:bottom-full z-20 px-2 w-full lg:w-auto pb-4 lg:pb-0 lg:top-1/2 sm:px-4 flex lg:flex-col gap-3">
 
+            <PropMenuButton menuArg="more" positionData={positionData} positionAction={positionAction} child={<DotsSix2Vertical iconH={iconH} iconW={iconW} />} />
 
             <PropMenuButton menuArg="colors" positionData={positionData} positionAction={positionAction} child={<ColorPalette iconH={iconH} iconW={iconW} />} />
             <PropMenuButton menuArg="images" positionData={positionData} positionAction={positionAction} child={<ImageIcon iconH={iconH} iconW={iconW} />} />
@@ -81,7 +84,7 @@ export const SideBar = ({ playerRef, positionData, positionAction }: SidebarProp
                     widthProp={" h-12 justify-center"}
                     positionData={positionData} positionAction={positionAction}
                     hiddenProp="lg:hidden group rounded-tl-none border-2 border-black
-                      p-1 cursor-pointer w-full lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center "
+                      p-1 cursor-pointer w-full bg-[#d3e0f6] lg:w-auto shadow-[0px_4px_0px_0px_black] hover:shadow-[0px_2px_0px_0px_black] hover:translate-y-1 flex rounded-full items-baseline justify-self-center justify-center text-center "
                       // scale exact string also used in playButton 
                      scale="scale-90" playerRef={playerRef} />
 

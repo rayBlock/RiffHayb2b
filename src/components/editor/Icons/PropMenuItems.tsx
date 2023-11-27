@@ -1,39 +1,59 @@
 
-export const ImageIcon = ({iconW, iconH}:any) => {
+export const ImageIcon = ({ iconW, iconH }: any) => {
 
 
     return (
 
         <svg xmlns="http://www.w3.org/2000/svg" width={iconW} height={iconH} fill="#1c2c27" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,36,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM156,88a12,12,0,1,1-12,12A12,12,0,0,1,156,88ZM40,200V172l52-52,80,80Zm176,0H194.63l-36-36,20-20L216,181.38V200Z"></path></svg>
-        )
+    )
 }
 
 
-export const VideoIcon = ({iconW, iconH}:any) => {
+export const VideoIcon = ({ iconW, iconH }: any) => {
 
 
     return (
 
         <svg xmlns="http://www.w3.org/2000/svg" width={iconW} height={iconH} fill="#1c2c27" viewBox="0 0 256 256"><path d="M168,236a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,236ZM232,64V176a36,36,0,0,1-36,36H48a36,36,0,0,1-36-36V64A36,36,0,0,1,48,40H208A36,36,0,0,1,232,64Zm-68,56a8,8,0,0,0-3.71-6.75l-44-28A8,8,0,0,0,104,92v56a8,8,0,0,0,12.29,6.75l44-28A8,8,0,0,0,164,120Z"></path></svg>
     )
-    }
+}
 
 
-export const TextIcon = ({iconW, iconH}:any) => {
+export const TextIcon = ({ iconW, iconH }: any) => {
 
 
     return (
 
-        <svg xmlns="http://www.w3.org/2000/svg" width={iconW} height={iconH} fill="#1c2c27" viewBox="0 0 256 256"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM184,96a8,8,0,0,1-16,0V88H136v88h16a8,8,0,0,1,0,16H104a8,8,0,0,1,0-16h16V88H88v8a8,8,0,0,1-16,0V80a8,8,0,0,1,8-8h96a8,8,0,0,1,8,8Z"></path></svg> 
-        )
+        <svg xmlns="http://www.w3.org/2000/svg" width={iconW} height={iconH} fill="#1c2c27" viewBox="0 0 256 256"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM184,96a8,8,0,0,1-16,0V88H136v88h16a8,8,0,0,1,0,16H104a8,8,0,0,1,0-16h16V88H88v8a8,8,0,0,1-16,0V80a8,8,0,0,1,8-8h96a8,8,0,0,1,8,8Z"></path></svg>
+    )
 }
 
 
-export const ColorPalette = ({iconW, iconH}:any) => {
-
+export const ColorPalette = ({ iconW, iconH }: any) => {
 
     return (
 
         <svg xmlns="http://www.w3.org/2000/svg" width={iconW} height={iconH} fill="#1e151b" viewBox="0 0 256 256"><path d="M200.77,53.89A103.27,103.27,0,0,0,128,24h-1.07A104,104,0,0,0,24,128c0,43,26.58,79.06,69.36,94.17A32,32,0,0,0,136,192a16,16,0,0,1,16-16h46.21a31.81,31.81,0,0,0,31.2-24.88,104.43,104.43,0,0,0,2.59-24A103.28,103.28,0,0,0,200.77,53.89ZM84,168a12,12,0,1,1,12-12A12,12,0,0,1,84,168Zm0-56a12,12,0,1,1,12-12A12,12,0,0,1,84,112Zm44-24a12,12,0,1,1,12-12A12,12,0,0,1,128,88Zm44,24a12,12,0,1,1,12-12A12,12,0,0,1,172,112Z"></path></svg>
     )
 }
+
+
+export const DotsSixVertical = ({ iconW, iconH }: any) => {
+
+
+    return (
+
+        <svg xmlns="http://www.w3.org/2000/svg" width={iconW} height={iconH} fill="#1e151b" viewBox="0 0 256 256"><path d="M80,40a40,40,0,1,0,40,40A40,40,0,0,0,80,40Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,80,104Zm96,16a40,40,0,1,0-40-40A40,40,0,0,0,176,120Zm0-64a24,24,0,1,1-24,24A24,24,0,0,1,176,56ZM80,136a40,40,0,1,0,40,40A40,40,0,0,0,80,136Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,80,200Zm136-24a8,8,0,0,1-8,8H184v24a8,8,0,0,1-16,0V184H144a8,8,0,0,1,0-16h24V144a8,8,0,0,1,16,0v24h24A8,8,0,0,1,216,176Z"></path></svg>
+    )
+}
+
+
+export const DotsSix2Vertical = ({ iconW, iconH }: any) => {
+
+
+    return (
+
+        <svg width={iconW} height={iconH} fill="#1e151b" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 6C8 7.10457 7.10457 8 6 8C4.89543 8 4 7.10457 4 6C4 4.89543 4.89543 4 6 4C7.10457 4 8 4.89543 8 6Z" fill="currentColor" /><path d="M8 12C8 13.1046 7.10457 14 6 14C4.89543 14 4 13.1046 4 12C4 10.8954 4.89543 10 6 10C7.10457 10 8 10.8954 8 12Z" fill="currentColor" /><path d="M6 20C7.10457 20 8 19.1046 8 18C8 16.8954 7.10457 16 6 16C4.89543 16 4 16.8954 4 18C4 19.1046 4.89543 20 6 20Z" fill="currentColor" /><path d="M14 6C14 7.10457 13.1046 8 12 8C10.8954 8 10 7.10457 10 6C10 4.89543 10.8954 4 12 4C13.1046 4 14 4.89543 14 6Z" fill="currentColor" /><path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" fill="currentColor" /><path d="M14 18C14 19.1046 13.1046 20 12 20C10.8954 20 10 19.1046 10 18C10 16.8954 10.8954 16 12 16C13.1046 16 14 16.8954 14 18Z" fill="currentColor" /><path d="M18 8C19.1046 8 20 7.10457 20 6C20 4.89543 19.1046 4 18 4C16.8954 4 16 4.89543 16 6C16 7.10457 16.8954 8 18 8Z" fill="currentColor" /><path d="M20 12C20 13.1046 19.1046 14 18 14C16.8954 14 16 13.1046 16 12C16 10.8954 16.8954 10 18 10C19.1046 10 20 10.8954 20 12Z" fill="currentColor" /><path d="M18 20C19.1046 20 20 19.1046 20 18C20 16.8954 19.1046 16 18 16C16.8954 16 16 16.8954 16 18C16 19.1046 16.8954 20 18 20Z" /></svg>)
+}
+
+
